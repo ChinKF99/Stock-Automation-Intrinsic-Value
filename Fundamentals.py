@@ -6,7 +6,7 @@ import time
 
 # Load local .env file if it exists
 load_dotenv()
-132
+
 # This looks for the variable locally OR from GitHub Actions
 api_key = os.environ.get("MY_FMP_APIKEY")
 if not api_key:
