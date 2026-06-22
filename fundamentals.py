@@ -8,7 +8,7 @@ import time
 load_dotenv()
 
 # This looks for the variable locally OR from GitHub Actions
-api_key = os.environ.get("MY_FMP_APIKEY")
+api_key = os.environ.get("MY_API_KEY")
 if not api_key:
     print("Error: MY_API_KEY not found in environment!")
 else:
