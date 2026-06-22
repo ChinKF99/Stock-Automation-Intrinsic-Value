@@ -18,24 +18,3 @@ if not API_KEY:
 else:
     print("Success: API key securely loaded.")
 
-# =====================================================
-# STEP 1 - LOAD TICKERS
-# =====================================================
-
-ticker_file = "sp500_tickers.csv"
-
-tickers_df = pd.read_csv(ticker_file)
-
-print("Columns found in ticker file:", tickers_df.columns.tolist())
-
-# Handle both possible column names: Ticker or Symbol
-if "Ticker" in tickers_df.columns:
-    ticker_list = tickers_df["Ticker"].dropna().astype(str).tolist()
-elif "Symbol" in tickers_df.columns:
-    ticker_list = tickers_df["Symbol"].dropna().astype(str).tolist()
-else:
-    raise ValueError(
-        "Ticker file must contain either a 'Ticker' column or a 'Symbol' column."
-    )
-
-print(f"Loaded {len(ticker_list)} tickers.")
