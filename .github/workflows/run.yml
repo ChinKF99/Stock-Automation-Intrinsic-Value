@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v4.1.1
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v5.1.0
       with:
         python-version: '3.14'
 
@@ -26,4 +26,4 @@ jobs:
       env:
         # Change 'YOUR_GITHUB_SECRET_NAME' to your actual GitHub secret name
         MY_API_KEY: ${{ secrets.MY_API_KEY}} 
-      run: python Fundamentals.py
+      run: python fundamentals.py
