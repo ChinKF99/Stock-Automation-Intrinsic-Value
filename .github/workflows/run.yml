@@ -24,6 +24,5 @@ jobs:
 
     - name: Execute script with Secrets
       env:
-        # Change 'YOUR_GITHUB_SECRET_NAME' to your actual GitHub secret name
-        MY_API_KEY: ${{ secrets.MY_API_KEY}} 
+        MY_API_KEY: ${{secrets.MY_API_KEY}} 
       run: python fundamentals.py
