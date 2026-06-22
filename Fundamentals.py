@@ -1,6 +1,19 @@
+import os
+from dotenv import load_dotenv
 import pandas as pd
 import requests
 import time
+
+# Load local .env file if it exists
+load_dotenv()
+
+# This looks for the variable locally OR from GitHub Actions
+api_key = os.environ.get("MY_FMP_APIKEY")
+if not api_key:
+    print("Error: MY_API_KEY not found in environment!")
+else:
+    print("Success: Variable securely loaded.")
+
 
 API_KEY = "YOUR_API_KEY"
 
