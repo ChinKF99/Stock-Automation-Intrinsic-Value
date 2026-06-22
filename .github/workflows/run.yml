@@ -20,6 +20,12 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        
+        # Clean the requirements file dynamically on the cloud server
+        # This removes the fixed "==16.0" version constraint from the file
+        sed -i 's/websockets==16.0/websockets>=10.0,<11.0/g' requirements.txt
+        
+        # Now install your cleaned requirements file safely
         pip install -r requirements.txt
 
     - name: Execute script with Secrets
