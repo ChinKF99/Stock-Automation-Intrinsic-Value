@@ -15,7 +15,7 @@ else:
     print("Success: Variable securely loaded.")
 
 
-API_KEY = "YOUR_API_KEY"
+API_KEY = "MY_API_KEY"
 
 tickers = pd.read_csv("sp500_tickers.csv")
 
