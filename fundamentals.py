@@ -17,6 +17,7 @@ else:
 
 API_KEY = "MY_API_KEY"
 
+## Replace the filename if necessary
 tickers = pd.read_csv("sp500_tickers.csv")
 
 results = []
