@@ -31,7 +31,6 @@ def fetch_json(session, name, url):
         response = session.get(url, timeout=30)
         print("Status code:", response.status_code)
 
-        # Try to parse JSON safely
         try:
             data = response.json()
         except Exception:
@@ -67,36 +66,18 @@ def main():
     ticker = TEST_TICKER
     session = requests.Session()
 
-    # IMPORTANT:
-    # These are CURRENT /stable endpoints to test.
-    # We are not using the legacy /api/v3 profile/income/balance/cashflow URLs anymore.
-
     urls = {
-        # Company profile / reference data
         "profile": f"https://financialmodelingprep.com/stable/profile?symbol={ticker}&apikey={API_KEY}",
-
-        # Latest income statement
         "income": f"https://financialmodelingprep.com/stable/income-statement?symbol={ticker}&limit=1&apikey={API_KEY}",
-
-        # Latest balance sheet
         "balance": f"https://financialmodelingprep.com/stable/balance-sheet-statement?symbol={ticker}&limit=1&apikey={API_KEY}",
-
-        # Latest cash flow statement
         "cashflow": f"https://financialmodelingprep.com/stable/cash-flow-statement?symbol={ticker}&limit=1&apikey={API_KEY}",
-
-        # Ratios / TTM-like metrics
-        # If this fails, we will remove it and compute some ratios ourselves later.
         "ratios": f"https://financialmodelingprep.com/stable/ratios-ttm?symbol={ticker}&apikey={API_KEY}",
     }
 
     results = {}
-
     for name, url in urls.items():
         results[name] = fetch_json(session, name, url)
 
-    # =================================================
-    # PARSE RESULTS SAFELY
-    # =================================================
     profile = results.get("profile")
     income = results.get("income")
     balance = results.get("balance")
@@ -109,22 +90,32 @@ def main():
     c = cashflow[0] if isinstance(cashflow, list) and len(cashflow) > 0 else {}
     r = ratios[0] if isinstance(ratios, list) and len(ratios) > 0 else {}
 
+    # Shares outstanding is not present in your profile response,
+    # so use weighted average diluted shares as the best available fallback.
+    shares_outstanding = (
+        p.get("sharesOutstanding")
+        or i.get("weightedAverageShsOutDil")
+        or i.get("weightedAverageShsOut")
+    )
+
     row = {
         "Ticker": ticker,
 
-        # Profile / reference data
-        "Company_Name": p.get("companyName") or p.get("company_name") or p.get("name"),
+        # Profile
+        "Company_Name": p.get("companyName") or p.get("name"),
         "Sector": p.get("sector"),
         "Industry": p.get("industry"),
         "Current_Price": p.get("price"),
-        "Market_Cap": p.get("mktCap") or p.get("marketCap"),
-        "Shares_Outstanding": p.get("sharesOutstanding"),
+        "Market_Cap": p.get("marketCap") or p.get("mktCap"),
+        "Shares_Outstanding": shares_outstanding,
 
         # Income statement
         "Revenue": i.get("revenue"),
+        "Gross_Profit": i.get("grossProfit"),
+        "Operating_Income": i.get("operatingIncome"),
         "Net_Income": i.get("netIncome"),
         "EPS": i.get("eps"),
-        "Operating_Income": i.get("operatingIncome"),
+        "Weighted_Avg_Shares_Diluted": i.get("weightedAverageShsOutDil"),
 
         # Cash flow
         "Operating_Cash_Flow": c.get("operatingCashFlow") or c.get("netCashProvidedByOperatingActivities"),
@@ -132,22 +123,32 @@ def main():
         "Capital_Expenditure": c.get("capitalExpenditure"),
 
         # Balance sheet
-        "Cash_And_Short_Term_Investments": (
-            b.get("cashAndShortTermInvestments")
-            or b.get("cashAndCashEquivalents")
-        ),
+        "Cash_And_Short_Term_Investments": b.get("cashAndShortTermInvestments") or b.get("cashAndCashEquivalents"),
         "Total_Debt": b.get("totalDebt"),
         "Net_Debt": b.get("netDebt"),
-        "Total_Equity": b.get("totalStockholdersEquity"),
+        "Total_Equity": b.get("totalStockholdersEquity") or b.get("totalEquity"),
 
-        # Ratios
-        "PE_Ratio": r.get("peRatioTTM") or r.get("peRatio"),
-        "Price_to_Book": r.get("priceToBookRatioTTM") or r.get("priceToBookRatio"),
-        "ROE": r.get("returnOnEquityTTM") or r.get("returnOnEquity"),
-        "ROA": r.get("returnOnAssetsTTM") or r.get("returnOnAssets"),
-        "Current_Ratio": r.get("currentRatioTTM") or r.get("currentRatio"),
-        "Debt_to_Equity": r.get("debtEquityRatioTTM") or r.get("debtEquityRatio"),
+        # Ratios (stable endpoint field names)
+        "PE_Ratio": r.get("priceToEarningsRatioTTM"),
+        "Price_to_Book": r.get("priceToBookRatioTTM"),
+        "Price_to_Sales": r.get("priceToSalesRatioTTM"),
+        "Current_Ratio": r.get("currentRatioTTM"),
+        "Debt_to_Equity": r.get("debtToEquityRatioTTM"),
+
+        # Derived metrics from stable ratios
+        "Gross_Margin": r.get("grossProfitMarginTTM"),
+        "Operating_Margin": r.get("operatingProfitMarginTTM"),
+        "Net_Margin": r.get("netProfitMarginTTM"),
     }
+
+    # Derive ROE and ROA manually because the stable ratios response
+    # you showed does not include explicit returnOnEquityTTM / returnOnAssetsTTM.
+    net_income = row["Net_Income"]
+    total_equity = row["Total_Equity"]
+    total_assets = b.get("totalAssets")
+
+    row["ROE"] = (net_income / total_equity) if (net_income is not None and total_equity not in [None, 0]) else None
+    row["ROA"] = (net_income / total_assets) if (net_income is not None and total_assets not in [None, 0]) else None
 
     df = pd.DataFrame([row])
     df.to_csv(OUTPUT_FILE, index=False)
