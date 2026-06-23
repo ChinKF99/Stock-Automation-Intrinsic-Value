@@ -3,18 +3,37 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# =========================
+# FMP
+# =========================
 FMP_API_KEY = os.getenv("MY_API_KEY")
 
-MYSQL_HOST = os.getenv("MYSQL_HOST", "localhost")
-MYSQL_PORT = int(os.getenv("MYSQL_PORT", 3306))
-MYSQL_USER = os.getenv("MYSQL_USER", "root")
-MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "")
-MYSQL_DB = os.getenv("MYSQL_DB", "stock_automation")
+if not FMP_API_KEY:
+    raise ValueError("FMP_API_KEY not found in .env")
 
-FMP_BASE = "https://financialmodelingprep.com/stable"
+# =========================
+# SQL Server
+# =========================
+SQL_SERVER = os.getenv("SQL_SERVER")
+SQL_DATABASE = os.getenv("SQL_DATABASE")
+SQL_USERNAME = os.getenv("SQL_USERNAME")
+SQL_PASSWORD = os.getenv("SQL_PASSWORD")
+SQL_DRIVER = os.getenv("SQL_DRIVER", "ODBC Driver 17 for SQL Server")
 
-DAILY_API_CALL_BUDGET = 250
-SAFE_DAILY_CALL_BUDGET = 150     # leave room for retries/tests
-CALLS_PER_TICKER = 5
-DEFAULT_BATCH_SIZE = SAFE_DAILY_CALL_BUDGET // CALLS_PER_TICKER   # 30 max safe theoretical
-RECOMMENDED_BATCH_SIZE = 20
+if not all([SQL_SERVER, SQL_DATABASE, SQL_USERNAME, SQL_PASSWORD]):
+    raise ValueError("One or more SQL Server environment variables are missing in .env")
+
+# =========================
+# FMP batch settings
+# =========================
+BATCH_SIZE = 20
+REQUEST_SLEEP_SECONDS = 0.25
+
+# =========================
+# Stable FMP endpoints
+# =========================
+FMP_PROFILE_URL = "https://financialmodelingprep.com/stable/profile"
+FMP_INCOME_URL = "https://financialmodelingprep.com/stable/income-statement"
+FMP_BALANCE_URL = "https://financialmodelingprep.com/stable/balance-sheet-statement"
+FMP_CASHFLOW_URL = "https://financialmodelingprep.com/stable/cash-flow-statement"
+FMP_RATIOS_URL = "https://financialmodelingprep.com/stable/ratios-ttm"
