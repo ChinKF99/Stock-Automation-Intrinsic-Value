@@ -45,3 +45,6 @@ yfinance==1.4.1
 zipp==4.1.0
 pyppeteer
 websockets
+sqlalchemy
+pyodbc
+html5lib
