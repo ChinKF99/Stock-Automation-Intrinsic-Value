@@ -7,7 +7,13 @@ from dotenv import load_dotenv
 # CONFIG
 # =====================================================
 TEST_TICKER = "AAPL"
+
+# Define your existing folder path and file name
+FOLDER_PATH = "data"
 OUTPUT_FILE = "test_one_stock_output.csv"
+
+# Combine them cleanly
+FULL_PATH = os.path.join(FOLDER_PATH, OUTPUT_FILE)
 
 # =====================================================
 # LOAD API KEY
@@ -151,7 +157,7 @@ def main():
     row["ROA"] = (net_income / total_assets) if (net_income is not None and total_assets not in [None, 0]) else None
 
     df = pd.DataFrame([row])
-    df.to_csv(OUTPUT_FILE, index=False)
+    df.to_csv(FULL_PATH, index=False)
 
     print("\n======================================")
     print("1-stock stable-endpoint test completed.")
