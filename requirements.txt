@@ -48,3 +48,4 @@ websockets
 sqlalchemy
 pyodbc
 html5lib
+pathlib
