@@ -1,21 +1,20 @@
 import os
 import sys
+from pathlib import Path
 import pandas as pd
 from sqlalchemy import create_engine, text
 from urllib.parse import quote_plus
 
-# =========================================================
-# Make project root importable
-# This file is inside: scripts/bronze/
-# We want to import from: config/config.py
-# =========================================================
-CURRENT_FILE = os.path.abspath(__file__)
-BRONZE_DIR = os.path.dirname(CURRENT_FILE)                 # .../scripts/bronze
-SCRIPTS_DIR = os.path.dirname(BRONZE_DIR)                  # .../scripts
-PROJECT_ROOT = os.path.dirname(SCRIPTS_DIR)                # project root
+# Get the directory of the current file
+CURRENT_DIR = Path(__file__).resolve().parent
 
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
+# Jump up 2 levels directly from current parent folder to the project root
+# Parent = bronze > scripts > root
+PROJECT_ROOT = CURRENT_DIR.parents[1]
+
+# Add to sys.path safely
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from config.config import (
     SQL_SERVER,
