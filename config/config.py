@@ -1,8 +1,12 @@
-import os
+# config/config.py
+from pathlib import Path
 from dotenv import load_dotenv
+import os
+from urllib.parse import quote_plus
+from sqlalchemy import create_engine
 
-load_dotenv()
-
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 # =========================
 # FMP
 # =========================
@@ -16,12 +20,23 @@ if not FMP_API_KEY:
 # =========================
 SQL_SERVER = os.getenv("SQL_SERVER")
 SQL_DATABASE = os.getenv("SQL_DATABASE")
-SQL_USERNAME = os.getenv("SQL_USERNAME")
-SQL_PASSWORD = os.getenv("SQL_PASSWORD")
 SQL_DRIVER = os.getenv("SQL_DRIVER", "ODBC Driver 17 for SQL Server")
+SQL_TRUSTED_CONNECTION = os.getenv("SQL_TRUSTED_CONNECTION", "yes")
 
-if not all([SQL_SERVER, SQL_DATABASE, SQL_USERNAME, SQL_PASSWORD]):
-    raise ValueError("One or more SQL Server environment variables are missing in .env")
+def get_sqlalchemy_engine():
+    """
+    Create SQLAlchemy engine for SQL Server using Windows Authentication.
+    """
+    conn_str = (
+        f"DRIVER={{{SQL_DRIVER}}};"
+        f"SERVER={SQL_SERVER};"
+        f"DATABASE={SQL_DATABASE};"
+        f"Trusted_Connection={SQL_TRUSTED_CONNECTION};"
+        f"TrustServerCertificate=yes;"
+    )
+
+    connection_url = f"mssql+pyodbc:///?odbc_connect={quote_plus(conn_str)}"
+    return create_engine(connection_url, fast_executemany=True)
 
 # =========================
 # FMP batch settings
