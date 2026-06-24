@@ -1,6 +1,22 @@
+import os
+import sys
 import pandas as pd
 from sqlalchemy import create_engine, text
 from urllib.parse import quote_plus
+
+# =========================================================
+# Make project root importable
+# This file is inside: scripts/bronze/
+# We want to import from: config/config.py
+# =========================================================
+CURRENT_FILE = os.path.abspath(__file__)
+BRONZE_DIR = os.path.dirname(CURRENT_FILE)                 # .../scripts/bronze
+SCRIPTS_DIR = os.path.dirname(BRONZE_DIR)                  # .../scripts
+PROJECT_ROOT = os.path.dirname(SCRIPTS_DIR)                # project root
+
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
 from config.config import (
     SQL_SERVER,
     SQL_DATABASE,
@@ -16,8 +32,9 @@ def get_sql_engine():
         f"DATABASE={SQL_DATABASE};"
         f"UID={SQL_USERNAME};"
         f"PWD={SQL_PASSWORD};"
-        "TrustServerCertificate=yes;"
+        f"TrustServerCertificate=yes;"
     )
+
     engine = create_engine(
         f"mssql+pyodbc:///?odbc_connect={quote_plus(conn_str)}"
     )
@@ -39,12 +56,18 @@ def main():
     tables = pd.read_html(url)
     df = tables[0].copy()
 
-    # Wikipedia table typically has columns:
-    # Symbol, Security, GICS Sector, GICS Sub-Industry, ...
+    print("Columns found from Wikipedia table:")
+    print(df.columns.tolist())
+
     df = df.rename(columns={
         "Symbol": "ticker",
         "Security": "company_name"
     })
+
+    if "ticker" not in df.columns or "company_name" not in df.columns:
+        raise ValueError(
+            f"Expected columns not found after rename. Current columns: {df.columns.tolist()}"
+        )
 
     df["ticker"] = df["ticker"].astype(str).apply(clean_ticker)
     df["company_name"] = df["company_name"].astype(str)
@@ -57,7 +80,6 @@ def main():
     engine = get_sql_engine()
 
     with engine.begin() as conn:
-        # clear old ticker universe and replace
         conn.execute(text("DELETE FROM bronze.sp500_tickers"))
 
     tickers_df.to_sql(
