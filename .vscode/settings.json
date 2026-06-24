@@ -26,5 +26,6 @@
   ],
 
   "terminal.integrated.scrollback": 2000,
-  "python.terminal.activateEnvironment": true
+  "python.terminal.activateEnvironment": true,
+
 }
