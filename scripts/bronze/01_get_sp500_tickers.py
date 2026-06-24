@@ -33,8 +33,7 @@ def get_sql_engine():
         f"DRIVER={{{SQL_DRIVER}}};"
         f"SERVER={SQL_SERVER};"
         f"DATABASE={SQL_DATABASE};"
-        f"UID={SQL_USERNAME};"
-        f"PWD={SQL_PASSWORD};"
+        f"Trusted_Connection=yes;"
         f"TrustServerCertificate=yes;"
     )
 
