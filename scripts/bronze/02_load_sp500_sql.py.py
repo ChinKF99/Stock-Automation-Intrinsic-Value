@@ -16,7 +16,6 @@ Target:
 from pathlib import Path
 import sys
 from datetime import datetime
-
 import pandas as pd
 from sqlalchemy import text
 
