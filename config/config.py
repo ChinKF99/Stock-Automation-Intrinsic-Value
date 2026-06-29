@@ -17,10 +17,12 @@ from sqlalchemy import create_engine
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATA_DIR = BASE_DIR / "data"
+RAW_DATA_DIR = DATA_DIR / "raw"
 BRONZE_DATA_DIR = DATA_DIR / "bronze"
 LOG_DIR = BASE_DIR / "logs"
 
 # Create folders automatically if missing
+RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
 BRONZE_DATA_DIR.mkdir(parents=True, exist_ok=True)
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -117,7 +119,7 @@ HEADERS = {
 # Local Files
 # ==========================================================
 
-SP500_CSV = BRONZE_DATA_DIR / "sp500_tickers.csv"
+SP500_CSV = RAW_DATA_DIR / "sp500_tickers.csv"
 
 # ==========================================================
 # Data Sources
