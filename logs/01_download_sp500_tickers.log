@@ -1,0 +1,18 @@
+2026-06-29 19:07:12 | INFO     | ======================================================================
+2026-06-29 19:07:12 | INFO     | BRONZE STEP 01 - DOWNLOAD S&P 500 TICKERS
+2026-06-29 19:07:12 | INFO     | ======================================================================
+2026-06-29 19:07:12 | INFO     | Downloading S&P 500 ticker list...
+2026-06-29 19:07:12 | INFO     | Wikipedia table downloaded successfully.
+2026-06-29 19:07:12 | INFO     | Total unique tickers found: 503
+2026-06-29 19:07:12 | INFO     | Preview:
+2026-06-29 19:07:12 | INFO     | 
+ticker
+   MMM
+   AOS
+   ABT
+  ABBV
+   ACN
+2026-06-29 19:07:12 | INFO     | Saving CSV...
+2026-06-29 19:07:12 | INFO     | CSV saved successfully.
+2026-06-29 19:07:12 | INFO     | Output file: C:\Users\Khai Foong\Desktop\Projects\Stock Automation Intrinsic Value\data\raw\sp500_tickers.csv
+2026-06-29 19:07:12 | INFO     | Step 01 completed successfully.
