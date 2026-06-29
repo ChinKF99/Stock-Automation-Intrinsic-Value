@@ -1,40 +1,123 @@
-import csv
+from pathlib import Path
+import sys
 import io
-import os
+import csv
 import pandas as pd
 import requests
 
-try:
-    print("Extracting S&P 500 tickers from alternative free source (Wikipedia)...")
-    
-    url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
-    
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    }
-    
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    
-    # Use 'match' to isolate the specific component table explicitly
-    html_stream = io.StringIO(response.text)
-    tables = pd.read_html(html_stream, match="Symbol")
-    df = tables[0]
-    
-    # Isolate tickers and replace dots with hyphens (e.g., BRK.B to BRK-B)
-    sp500_tickers = df["Symbol"].str.replace('.', '-', regex=False).tolist()
-    
-    # Target output file layout
-    output_file = "sp500_tickers.csv"
-    
-    with open(output_file, mode="w", newline="", encoding="utf-8") as file:
-        writer = csv.writer(file)
-        writer.writerow(["ticker"])  # Set header
-        for ticker in sp500_tickers:
-            writer.writerow([ticker])
-            
-    print(f"\nSuccess! Found {len(sp500_tickers)} S&P 500 tickers.")
-    print(f"Saved CSV file to: {os.path.abspath(output_file)}")
+# ==========================================================
+# Make project root importable
+# ==========================================================
+CURRENT_FILE = Path(__file__).resolve()
+PROJECT_ROOT = CURRENT_FILE.parents[2]
 
-except Exception as e:
-    print(f"\nAn unexpected script error occurred: {e}")
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+# ==========================================================
+# Project Configuration
+# ==========================================================
+from config.config import (
+    SP500_WIKIPEDIA_URL,
+    SP500_CSV,
+    HEADERS,
+    HTTP_TIMEOUT,
+)
+
+# ==========================================================
+# Logging Helper
+# ==========================================================
+def log(message: str):
+    print(f"[INFO] {message}")
+
+# ==========================================================
+# Extract S&P 500 Tickers
+# ==========================================================
+def download_sp500_tickers():
+
+    log("Extracting S&P 500 tickers from Wikipedia...")
+
+    response = requests.get(
+        SP500_WIKIPEDIA_URL,
+        headers=HEADERS,
+        timeout=HTTP_TIMEOUT
+    )
+
+    response.raise_for_status()
+
+    html_stream = io.StringIO(response.text)
+
+    tables = pd.read_html(
+        html_stream,
+        match="Symbol"
+    )
+
+    if not tables:
+        raise ValueError("Unable to locate the S&P 500 constituents table.")
+
+    df = tables[0]
+
+    # Keep only ticker column
+    df = df[["Symbol"]].copy()
+
+    df.rename(
+        columns={"Symbol": "ticker"},
+        inplace=True
+    )
+
+    df["ticker"] = (
+        df["ticker"]
+        .str.strip()
+        .str.upper()
+        .str.replace(".", "-", regex=False)
+    )
+
+    df.drop_duplicates(inplace=True)
+
+    return df
+
+# ==========================================================
+# Save CSV
+# ==========================================================
+def save_csv(df):
+
+    log(f"Saving CSV to:\n{SP500_CSV}")
+
+    with open(
+        SP500_CSV,
+        mode="w",
+        newline="",
+        encoding="utf-8"
+    ) as file:
+
+        writer = csv.writer(file)
+
+        writer.writerow(["ticker"])
+
+        writer.writerows(df.values.tolist())
+
+    log("CSV saved successfully.")
+
+# ==========================================================
+# Main
+# ==========================================================
+def main():
+
+    print("=" * 60)
+    print("BRONZE STEP 01 - DOWNLOAD S&P 500 TICKERS")
+    print("=" * 60)
+
+    df = download_sp500_tickers()
+
+    log(f"Total tickers found : {len(df)}")
+
+    print("\nPreview:")
+
+    print(df.head())
+
+    save_csv(df)
+
+    print("\nCompleted successfully.")
+
+if __name__ == "__main__":
+    main()
