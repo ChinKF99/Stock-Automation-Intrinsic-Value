@@ -1,7 +1,6 @@
 from pathlib import Path
 import sys
 from datetime import datetime
-
 import pandas as pd
 import requests
 from sqlalchemy import text
@@ -265,54 +264,49 @@ def truncate_target_table(engine: Engine) -> None:
 
     log(f"Existing rows deleted from {FULL_TABLE_NAME}")
 
+def load_to_sql(engine, df):
 
-def load_sp500_to_sql(engine: Engine, df: pd.DataFrame) -> None:
-    """
-    Load the transformed S&P 500 DataFrame into SQL Server.
+    print(f"\nPreparing to insert {len(df)} rows...")
 
-    Python inserts only:
-        ticker
-        company_name
-        source
-
-    SQL Server automatically populates:
-        load_date
-        load_ts
-    """
-    insert_df = df[["ticker", "company_name", "source"]].copy()
-
-    log("Preview of DataFrame to insert:")
-    print(insert_df.head())
-    log(f"Rows to insert: {len(insert_df)}")
-    log(f"Columns to insert: {insert_df.columns.tolist()}")
-
-    before_count = get_table_row_count(engine)
-    log(f"Rows currently in {FULL_TABLE_NAME} before delete: {before_count}")
-
-    truncate_target_table(engine)
+    insert_sql = text("""
+        INSERT INTO bronze.sp500_tickers
+        (
+            ticker,
+            company_name,
+            source
+        )
+        VALUES
+        (
+            :ticker,
+            :company_name,
+            :source,
+        )
+        """)
 
     with engine.begin() as conn:
-        insert_df.to_sql(
-            name=TARGET_TABLE,
-            con=conn,
-            schema=TARGET_SCHEMA,
-            if_exists="append",
-            index=False,
-            method="multi",
-            chunksize=200
-        )
 
-    log("df.to_sql completed successfully.")
+        conn.execute(text("""
+            DELETE FROM bronze.sp500_tickers;
+        """))
 
-    after_count = get_table_row_count(engine)
-    log(f"Rows currently in {FULL_TABLE_NAME} after insert: {after_count}")
+        print("Existing rows deleted.")
 
-    if after_count != len(insert_df):
-        raise ValueError(
-            f"Row count validation failed. "
-            f"Expected {len(insert_df)} rows, but found {after_count} rows in SQL."
-        )
+        records = df.to_dict(orient="records")
+        print(records[0])
+        print(len(records))
 
+        conn.execute(insert_sql, records)
+        result = conn.execute(text("""
+            SELECT TOP 5 *
+            FROM bronze.sp500_tickers
+            """)).fetchall()  
+        print(result)
+
+        count = conn.execute(
+            text("SELECT COUNT(*) FROM bronze.sp500_tickers")
+        ).scalar()
+
+        print(f"Rows after insert: {count}")
 
 # ============================================================
 # Main
@@ -345,7 +339,7 @@ def main() -> None:
 
     # 7) Load into SQL Server
     log(f"Loading S&P 500 ticker list into {FULL_TABLE_NAME}...")
-    load_sp500_to_sql(engine, df)
+    load_to_sql(engine, df)
 
     log("SUCCESS - bronze.sp500_tickers has been loaded.")
     log(f"Total tickers loaded: {len(df)}")
