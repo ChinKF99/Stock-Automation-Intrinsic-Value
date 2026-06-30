@@ -33,7 +33,7 @@ LOG_DIR.mkdir(parents=True, exist_ok=True)
 load_dotenv(BASE_DIR / ".env")
 
 # ==========================================================
-# Financial Modeling Prep
+# Financial Modeling Prep API Key
 # ==========================================================
 
 FMP_API_KEY = os.getenv("MY_API_KEY")
@@ -82,23 +82,6 @@ def get_sqlalchemy_engine():
     )
 
 # ==========================================================
-# ETL Settings
-# ==========================================================
-
-BATCH_SIZE = 20
-
-REQUEST_SLEEP_SECONDS = 0.25
-
-HTTP_TIMEOUT = 30
-
-USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36 "
-    "(KHTML, like Gecko) "
-    "Chrome/137.0.0.0 Safari/537.36"
-)
-
-# ==========================================================
 # Bronze Tables
 # ==========================================================
 BRONZE_SCHEMA = "bronze"
@@ -125,10 +108,15 @@ HEADERS = {
 }
 
 # ==========================================================
-# Local Files
+# Raw CSV Files
 # ==========================================================
 
 SP500_CSV = RAW_DATA_DIR / "sp500_tickers.csv"
+COMPANY_PROFILE_CSV = RAW_DATA_DIR / "company_profile.csv"
+## INCOME_STATEMENT_CSV
+## BALANCE_SHEET_CSV
+## CASHFLOW_CSV
+## RATIOS_CSV
 
 # ==========================================================
 # Data Sources
@@ -137,6 +125,14 @@ SP500_CSV = RAW_DATA_DIR / "sp500_tickers.csv"
 SP500_WIKIPEDIA_URL = (
     "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
 )
+
+# ==========================================================
+# API Batch Settings
+# ==========================================================
+
+FMP_BATCH_SIZE = 5
+REQUEST_SLEEP_SECONDS = 0.25
+HTTP_TIMEOUT = 30
 
 # ==========================================================
 # Financial Modeling Prep Endpoints
