@@ -4,7 +4,7 @@
 
 Purpose
 -------
-Load the downloaded S&P 500 CSV into SQL Server.
+Load the downloaded S&P 500 ticker CSV into SQL Server.
 
 Source
 ------
@@ -13,9 +13,8 @@ data/raw/sp500_tickers.csv
 Target
 ------
 bronze.sp500_tickers
-============================================================
-"""
 
+"""
 from pathlib import Path
 import sys
 import pandas as pd
@@ -36,27 +35,31 @@ if str(PROJECT_ROOT) not in sys.path:
 # ==========================================================
 
 from config.config import (
-    BRONZE_SCHEMA,
-    SP500_TABLE,
-    FULL_SP500_TABLE,
-    SP500_CSV
+    SP500_CSV,
+    get_sqlalchemy_engine,
 )
 
-from config.config import get_sqlalchemy_engine
-
 from config.logging_config import setup_logger
+
+from utils.sql_utils import (
+    BRONZE_SCHEMA,
+    BRONZE_02_TARGET_TABLE,
+    print_connection_info,
+    ensure_table,
+    delete_all_rows,
+    get_row_count,
+    execute_sql
+)
 
 logger = setup_logger(Path(__file__).stem)
 
 # ============================================================
-# File paths
+# Variables for File Path & Schema, Tables
 # ============================================================
 
 CSV_FILE = SP500_CSV
-
 TARGET_SCHEMA = BRONZE_SCHEMA
-TARGET_TABLE = SP500_TABLE
-FULL_TABLE = FULL_SP500_TABLE
+TARGET_TABLE = BRONZE_02_TARGET_TABLE
 
 # ==========================================================
 # Read CSV
@@ -78,91 +81,33 @@ def read_csv():
     return df
 
 # ==========================================================
-# Ensure SQL objects exist
+# Insert into SQL
 # ==========================================================
 
-def ensure_table(engine) -> None:
-    """
-    Create Bronze schema/table if it doesn't already exist.
-    """
+def load_to_sql(engine, df, target_table):
 
-    logger.info("Checking SQL schema/table...")
+    insert_sql = text(f"""
 
-    sql = """
-    IF NOT EXISTS
-    (
-        SELECT *
-        FROM sys.schemas
-        WHERE name='bronze'
-    )
-        EXEC('CREATE SCHEMA bronze');
-
-    IF OBJECT_ID('bronze.sp500_tickers','U') IS NULL
-
-    CREATE TABLE bronze.sp500_tickers
-    (
-        ticker VARCHAR(20) PRIMARY KEY,
-
-        load_date DATE
-            DEFAULT CAST(GETDATE() AS DATE),
-
-        load_ts DATETIME2
-            DEFAULT SYSDATETIME()
-    );
-    """
-
-    with engine.begin() as conn:
-        conn.execute(text(sql))
-
-    logger.info("Schema/table verified.")
-
-
-# ==========================================================
-# Load CSV into SQL
-# ==========================================================
-
-def load_sql(engine, df: pd.DataFrame) -> None:
-    """
-    Replace existing tickers with the latest download.
-    """
-
-    logger.info("Deleting existing rows...")
-
-    with engine.begin() as conn:
-
-        conn.execute(
-            text(
-                "DELETE FROM bronze.sp500_tickers;"
-            )
+        INSERT INTO {target_table}
+        (
+            ticker
         )
 
-        logger.info("Inserting %s rows...", len(df))
-
-        insert_sql = text("""
-            INSERT INTO bronze.sp500_tickers
-            (
-                ticker
-            )
-            VALUES
-            (
-                :ticker
-            )
-        """)
-
-        conn.execute(
-            insert_sql,
-            df.to_dict(orient="records")
+        VALUES
+        (
+            :ticker
         )
 
-        count = conn.execute(
-            text(
-                "SELECT COUNT(*) FROM bronze.sp500_tickers;"
-            )
-        ).scalar()
+    """)
 
-    logger.info("Rows successfully inserted : %s", count)
+    records = df.to_dict(orient="records")
 
+    execute_sql(engine,insert_sql,records)
 
+    count = get_row_count(engine, target_table)
+
+    logger.info(f"{count} rows inserted")
+    
 # ==========================================================
 # Main
 # ==========================================================
@@ -175,13 +120,15 @@ def main():
 
     engine = get_sqlalchemy_engine()
 
-    logger.info("SQL connection established.")
+    print_connection_info(engine)
 
-    ensure_table(engine)
+    ensure_table(engine, TARGET_SCHEMA, TARGET_TABLE)
+
+    delete_all_rows(engine, TARGET_TABLE)
 
     df = read_csv()
 
-    load_sql(engine, df)
+    load_to_sql(engine, df, TARGET_TABLE)
 
     logger.info("Step 02 completed successfully.")
 
