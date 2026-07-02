@@ -20,11 +20,13 @@ DATA_DIR = BASE_DIR / "data"
 RAW_DATA_DIR = DATA_DIR / "raw"
 BRONZE_DATA_DIR = DATA_DIR / "bronze"
 LOG_DIR = BASE_DIR / "logs"
+COMPANY_PROFILE_FOLDER = RAW_DATA_DIR/ "company_profile"
 
 # Create folders automatically if missing
 RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
 BRONZE_DATA_DIR.mkdir(parents=True, exist_ok=True)
 LOG_DIR.mkdir(parents=True, exist_ok=True)
+COMPANY_PROFILE_FOLDER.mkdir(parents=True,exist_ok=True)
 
 # ==========================================================
 # Load .env
