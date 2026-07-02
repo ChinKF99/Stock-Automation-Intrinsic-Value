@@ -45,3 +45,8 @@ def read_json(file_path: Path):
 
     with open(file_path, encoding="utf-8") as f:
         return json.load(f)
+    
+
+def json_exists(folder: Path, ticker: str) -> bool:
+
+    return (folder / f"{ticker}.json").exists()
