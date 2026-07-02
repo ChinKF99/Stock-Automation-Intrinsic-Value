@@ -1,11 +1,11 @@
-2026-07-02 08:31:24 | INFO     | ============================================================
-2026-07-02 08:31:24 | INFO     | STEP 03 - DOWNLOAD COMPANY PROFILE
-2026-07-02 08:31:24 | INFO     | ============================================================
-2026-07-02 08:31:24 | INFO     | Reading tickers from SQL Server...
-2026-07-02 08:31:24 | INFO     | 503 tickers loaded.
-2026-07-02 08:31:24 | INFO     | [1/503] Downloading A
-2026-07-02 08:31:28 | INFO     | [2/503] Downloading AAPL
-2026-07-02 08:31:30 | INFO     | [3/503] Downloading ABBV
-2026-07-02 08:31:31 | INFO     | [4/503] Downloading ABNB
-2026-07-02 08:31:33 | INFO     | [5/503] Downloading ABT
-2026-07-02 08:31:34 | INFO     | Today's batch limit reached.
+2026-07-02 08:31:59 | INFO     | ============================================================
+2026-07-02 08:31:59 | INFO     | STEP 03 - DOWNLOAD COMPANY PROFILE
+2026-07-02 08:31:59 | INFO     | ============================================================
+2026-07-02 08:31:59 | INFO     | Reading tickers from SQL Server...
+2026-07-02 08:31:59 | INFO     | 503 tickers loaded.
+2026-07-02 08:31:59 | INFO     | [1/503] Downloading A
+2026-07-02 08:32:01 | INFO     | [2/503] Downloading AAPL
+2026-07-02 08:32:02 | INFO     | [3/503] Downloading ABBV
+2026-07-02 08:32:04 | INFO     | [4/503] Downloading ABNB
+2026-07-02 08:32:05 | INFO     | [5/503] Downloading ABT
+2026-07-02 08:32:07 | INFO     | Today's batch limit reached.
