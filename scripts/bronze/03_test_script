@@ -1,0 +1,33 @@
+from pathlib import Path
+import sys
+
+CURRENT_FILE = Path(__file__).resolve()
+PROJECT_ROOT = CURRENT_FILE.parents[2]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from config.config import (
+    FMP_PROFILE_URL,
+    FMP_API_KEY
+)
+
+import requests
+
+ticker = "AAPL"
+
+url = (
+    f"{FMP_PROFILE_URL}"
+    f"?symbol={ticker}"
+    f"&apikey={FMP_API_KEY}"
+)
+
+print(url)
+
+response = requests.get(
+    url,
+    timeout=30
+)
+
+print(response.status_code)
+
+print(response.text[:500])
