@@ -1,8 +1,4 @@
-2026-07-02 16:56:06 | INFO     | Connected SQL Server
-2026-07-02 16:56:06 | INFO     | Server   : DESKTOP-I5Q65P1\SQLEXPRESS
-2026-07-02 16:56:06 | INFO     | Database : StockAutomation
-2026-07-02 16:56:06 | INFO     | Login    : DESKTOP-I5Q65P1\Khai Foong
-2026-07-02 16:56:06 | INFO     | Verified table bronze.sp500_tickers
-2026-07-02 16:56:06 | INFO     | Deleting existing rows from bronze.sp500_tickers
-2026-07-02 16:56:06 | INFO     | Delete completed.
-2026-07-02 16:56:06 | INFO     | SQL executed successfully.
+2026-07-09 07:29:31 | INFO     | Connected SQL Server
+2026-07-09 07:29:31 | INFO     | Server   : DESKTOP-I5Q65P1\SQLEXPRESS
+2026-07-09 07:29:31 | INFO     | Database : StockAutomation
+2026-07-09 07:29:31 | INFO     | Login    : DESKTOP-I5Q65P1\Khai Foong
