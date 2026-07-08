@@ -1,7 +1,2 @@
 .env
-data/raw/company_profile/A.json
-data/raw/company_profile/AAPL.json
-data/raw/company_profile/ABBV.json
-data/raw/company_profile/ABNB.json
-data/raw/company_profile/ABT.json
 *.json
