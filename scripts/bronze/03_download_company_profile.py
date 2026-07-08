@@ -37,6 +37,7 @@ from config.config import (
 )
 
 from utils.sql_utils import (
+    print_connection_info,
     BRONZE_02_TARGET_TABLE
 )
 
@@ -49,7 +50,7 @@ from config.logging_config import setup_logger
 logger = setup_logger(Path(__file__).stem)
 
 
-def get_sp500_tickers():
+def get_sp500_tickers(engine):
 
     logger.info("Reading tickers from SQL Server...")
 
@@ -58,8 +59,6 @@ def get_sp500_tickers():
         FROM {BRONZE_02_TARGET_TABLE}
         ORDER BY ticker
     """
-
-    engine = get_sqlalchemy_engine()
 
     df = pd.read_sql(sql, engine)
 
@@ -103,7 +102,11 @@ def main():
     logger.info("STEP 03 - DOWNLOAD COMPANY PROFILE")
     logger.info("=" * 60)
 
-    tickers = get_sp500_tickers()
+    engine = get_sqlalchemy_engine()
+
+    print_connection_info(engine)
+
+    tickers = get_sp500_tickers(engine)
 
     downloaded = 0
 
