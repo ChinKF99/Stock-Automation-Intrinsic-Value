@@ -1,11 +1,26 @@
-2026-07-02 08:31:59 | INFO     | ============================================================
-2026-07-02 08:31:59 | INFO     | STEP 03 - DOWNLOAD COMPANY PROFILE
-2026-07-02 08:31:59 | INFO     | ============================================================
-2026-07-02 08:31:59 | INFO     | Reading tickers from SQL Server...
-2026-07-02 08:31:59 | INFO     | 503 tickers loaded.
-2026-07-02 08:31:59 | INFO     | [1/503] Downloading A
-2026-07-02 08:32:01 | INFO     | [2/503] Downloading AAPL
-2026-07-02 08:32:02 | INFO     | [3/503] Downloading ABBV
-2026-07-02 08:32:04 | INFO     | [4/503] Downloading ABNB
-2026-07-02 08:32:05 | INFO     | [5/503] Downloading ABT
-2026-07-02 08:32:07 | INFO     | Today's batch limit reached.
+2026-07-09 07:29:30 | INFO     | ============================================================
+2026-07-09 07:29:30 | INFO     | STEP 03 - DOWNLOAD COMPANY PROFILE
+2026-07-09 07:29:30 | INFO     | ============================================================
+2026-07-09 07:29:31 | INFO     | Reading tickers from SQL Server...
+2026-07-09 07:29:31 | INFO     | 503 tickers loaded.
+2026-07-09 07:29:31 | INFO     | [1/503] A already exists. Skipped.
+2026-07-09 07:29:31 | INFO     | [2/503] AAPL already exists. Skipped.
+2026-07-09 07:29:31 | INFO     | [3/503] ABBV already exists. Skipped.
+2026-07-09 07:29:31 | INFO     | [4/503] ABNB already exists. Skipped.
+2026-07-09 07:29:31 | INFO     | [5/503] ABT already exists. Skipped.
+2026-07-09 07:29:31 | INFO     | [6/503] ACGL already exists. Skipped.
+2026-07-09 07:29:31 | INFO     | [7/503] ACN already exists. Skipped.
+2026-07-09 07:29:31 | INFO     | [8/503] ADBE already exists. Skipped.
+2026-07-09 07:29:31 | INFO     | [9/503] ADI already exists. Skipped.
+2026-07-09 07:29:31 | INFO     | [10/503] ADM already exists. Skipped.
+2026-07-09 07:29:31 | INFO     | [11/503] ADP already exists. Skipped.
+2026-07-09 07:29:31 | INFO     | [12/503] ADSK already exists. Skipped.
+2026-07-09 07:29:31 | INFO     | [13/503] AEE already exists. Skipped.
+2026-07-09 07:29:31 | INFO     | [14/503] AEP already exists. Skipped.
+2026-07-09 07:29:31 | INFO     | [15/503] AES already exists. Skipped.
+2026-07-09 07:29:31 | INFO     | [16/503] Downloading AFL
+2026-07-09 07:29:32 | INFO     | [17/503] Downloading AIG
+2026-07-09 07:29:34 | INFO     | [18/503] Downloading AIZ
+2026-07-09 07:29:35 | INFO     | [19/503] Downloading AJG
+2026-07-09 07:29:36 | INFO     | [20/503] Downloading AKAM
+2026-07-09 07:29:38 | INFO     | Today's batch limit reached.
