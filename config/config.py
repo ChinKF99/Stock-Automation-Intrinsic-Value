@@ -105,11 +105,6 @@ HEADERS = {
 # ==========================================================
 
 SP500_CSV = RAW_DATA_DIR / "sp500_tickers.csv"
-COMPANY_PROFILE_CSV = RAW_DATA_DIR / "company_profile.csv"
-## INCOME_STATEMENT_CSV
-## BALANCE_SHEET_CSV
-## CASHFLOW_CSV
-## RATIOS_CSV
 
 # ==========================================================
 # Data Sources
