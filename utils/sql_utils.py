@@ -47,47 +47,8 @@ def print_connection_info(engine: Engine) -> None:
 BRONZE_SCHEMA = "bronze"
 BRONZE_02_TABLE = "sp500_tickers"
 BRONZE_02_TARGET_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_02_TABLE}"
-
-# ==========================================================
-# Row Count
-# ==========================================================
-
-def get_row_count(
-    engine: Engine,
-    table: str
-) -> int:
-    """
-    Return row count of a SQL table.
-    """
-
-    sql = text(f"""
-        SELECT COUNT(*)
-        FROM {table}
-    """)
-
-    with engine.begin() as conn:
-        return conn.execute(sql).scalar()
-
-# ==========================================================
-# Delete Existing Rows
-# ==========================================================
-
-def delete_all_rows(
-    engine: Engine,
-    table
-) -> None:
-    """
-    Delete all rows from a table.
-    """
-
-    logger.info(f"Deleting existing rows from {table}")
-
-    sql = text(f"DELETE FROM {table}")
-
-    with engine.begin() as conn:
-        conn.execute(sql)
-
-    logger.info("Delete completed.")
+BRONZE_04_TABLE = "company_profile"
+BRONZE_04_TARGET_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_04_TABLE}"
 
 # ==========================================================
 # Ensure Table
@@ -128,6 +89,49 @@ def ensure_table(engine, schema, table):
         conn.execute(sql)
 
     logger.info(f"Verified table {table}")
+
+# ==========================================================
+# Get Row Count
+# ==========================================================
+
+def get_row_count(
+    engine: Engine,
+    table: str
+) -> int:
+    """
+    Return row count of a SQL table.
+    """
+
+    sql = text(f"""
+        SELECT COUNT(*)
+        FROM {table}
+    """)
+
+    with engine.begin() as conn:
+        count = conn.execute(sql).scalar()
+    
+    logger.info(f"{count} rows inserted")
+
+# ==========================================================
+# Delete Existing Rows
+# ==========================================================
+
+def delete_all_rows(
+    engine: Engine,
+    table
+) -> None:
+    """
+    Delete all rows from a table.
+    """
+
+    logger.info(f"Deleting existing rows from {table}")
+
+    sql = text(f"DELETE FROM {table}")
+
+    with engine.begin() as conn:
+        conn.execute(sql)
+
+    logger.info("Delete completed.")
 
 # ==========================================================
 # Execute SQL
