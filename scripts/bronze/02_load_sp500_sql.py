@@ -104,10 +104,6 @@ def load_to_sql(engine, df, target_table):
 
     execute_sql(engine,insert_sql,records)
 
-    count = get_row_count(engine, target_table)
-
-    logger.info(f"{count} rows inserted")
-    
 # ==========================================================
 # Main
 # ==========================================================
@@ -130,8 +126,9 @@ def main():
 
     load_to_sql(engine, df, TARGET_TABLE)
 
-    logger.info("Step 02 completed successfully.")
+    get_row_count(engine, TARGET_TABLE)
 
+    logger.info("Step 02 completed successfully.")
 
 if __name__ == "__main__":
     main()
