@@ -46,92 +46,100 @@ def print_connection_info(engine: Engine) -> None:
 #Bronze table for bronze.sp500_tickers
 BRONZE_SCHEMA = "bronze"
 BRONZE_02_TABLE = "sp500_tickers"
-BRONZE_02_TARGET_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_02_TABLE}"
+BRONZE_02_SCHEMA_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_02_TABLE}"
 BRONZE_04_TABLE = "company_profile"
-BRONZE_04_TARGET_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_04_TABLE}"
+BRONZE_04_SCHEMA_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_04_TABLE}"
 
 # ==========================================================
-# Ensure Table
+# Ensure Schema & Table Exists
 # ==========================================================
-
-def ensure_table(engine, schema, table):
+def ensure_table(
+    engine,
+    schema: str,
+    table: str,
+    create_sql: str
+) -> None:
     """
-    Create bronze.sp500_tickers if it does not exist.
+    Ensure a schema and table exist.
+
+    Parameters
+    ----------
+    engine : SQLAlchemy Engine
+
+    schema : str
+        Schema name.
+        Example:
+            bronze
+
+    table_name : str
+        Table name only.
+        Example:
+            sp500_tickers
+
+    create_sql : str
+        CREATE TABLE statement only.
+
+        Example:
+
+        CREATE TABLE bronze.sp500_tickers
+        (
+            ...
+        );
     """
 
-    sql = text(f"""
-
+    sql = f"""
     IF NOT EXISTS
     (
-        SELECT *
+        SELECT 1
         FROM sys.schemas
-        WHERE name= '{schema}'
+        WHERE name = '{schema}'
     )
+    BEGIN
         EXEC('CREATE SCHEMA {schema}');
+    END;
 
-    IF OBJECT_ID('{table}','U') IS NULL
-
-    CREATE TABLE {table}
-    (
-        ticker VARCHAR(20)
-            PRIMARY KEY,
-
-        load_date DATE
-            DEFAULT CAST(GETDATE() AS DATE),
-
-        load_ts DATETIME2
-            DEFAULT SYSDATETIME()
-    );
-
-    """)
+    IF OBJECT_ID('{schema}.{table}','U') IS NULL
+    BEGIN
+        {create_sql}
+    END;
+    """
 
     with engine.begin() as conn:
-        conn.execute(sql)
+        conn.execute(text(sql))
 
-    logger.info(f"Verified table {table}")
+    logger.info("Verified table %s.%s", schema, table)
 
 # ==========================================================
 # Get Row Count
 # ==========================================================
 
-def get_row_count(
-    engine: Engine,
-    table: str
-) -> int:
-    """
-    Return row count of a SQL table.
-    """
+def get_row_count(engine, schema: str, table_name: str) -> int:
 
-    sql = text(f"""
-        SELECT COUNT(*)
-        FROM {table}
-    """)
+    sql = text(
+        f"SELECT COUNT(*) FROM {schema}.{table_name}"
+    )
 
     with engine.begin() as conn:
         count = conn.execute(sql).scalar()
     
-    logger.info(f"{count} rows inserted")
+    logger.info(f"Total {count} rows inserted")
+
 
 # ==========================================================
-# Delete Existing Rows
+# Truncate Table
 # ==========================================================
 
-def delete_all_rows(
-    engine: Engine,
-    table
-) -> None:
+def truncate_table(engine, schema: str, table_name: str) -> None:
     """
     Delete all rows from a table.
     """
 
-    logger.info(f"Deleting existing rows from {table}")
-
-    sql = text(f"DELETE FROM {table}")
+    sql = text(f"DELETE FROM {schema}.{table_name}")
 
     with engine.begin() as conn:
         conn.execute(sql)
 
-    logger.info("Delete completed.")
+    logger.info("Table truncated %s.%s", schema, table_name)
 
 # ==========================================================
 # Execute SQL
@@ -166,7 +174,7 @@ def bulk_insert_dataframe(
     """
 
     logger.info(
-        f"Inserting {len(dataframe)} rows into {schema}.{table}"
+        f"Inserting dataframe data into {schema}.{table}"
     )
 
     dataframe.to_sql(
