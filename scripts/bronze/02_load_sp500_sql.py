@@ -43,10 +43,11 @@ from config.logging_config import setup_logger
 
 from utils.sql_utils import (
     BRONZE_SCHEMA,
-    BRONZE_02_TARGET_TABLE,
+    BRONZE_02_TABLE,
+    BRONZE_02_SCHEMA_TABLE,
     print_connection_info,
     ensure_table,
-    delete_all_rows,
+    truncate_table,
     get_row_count,
     execute_sql
 )
@@ -59,7 +60,8 @@ logger = setup_logger(Path(__file__).stem)
 
 CSV_FILE = SP500_CSV
 TARGET_SCHEMA = BRONZE_SCHEMA
-TARGET_TABLE = BRONZE_02_TARGET_TABLE
+TARGET_TABLE = BRONZE_02_TABLE
+TARGET_SCHEMA_TABLE = BRONZE_02_SCHEMA_TABLE
 
 # ==========================================================
 # Read CSV
@@ -79,6 +81,23 @@ def read_csv():
     logger.info(f"{len(df)} rows loaded from CSV.")
 
     return df
+
+# ==========================================================
+# SQL Statements for ensure_table()
+# ==========================================================
+
+CREATE_SQL = f"""
+CREATE TABLE {TARGET_SCHEMA_TABLE}
+(
+    ticker VARCHAR(20) PRIMARY KEY,
+
+    load_date DATE
+        DEFAULT CAST(GETDATE() AS DATE),
+
+    load_ts DATETIME2
+        DEFAULT SYSDATETIME()
+);
+"""
 
 # ==========================================================
 # Insert into SQL
@@ -118,15 +137,19 @@ def main():
 
     print_connection_info(engine)
 
-    ensure_table(engine, TARGET_SCHEMA, TARGET_TABLE)
+    ensure_table(
+    engine=engine,
+    schema=TARGET_SCHEMA,
+    table=TARGET_TABLE,
+    create_sql=CREATE_SQL)
 
-    delete_all_rows(engine, TARGET_TABLE)
+    truncate_table(engine, TARGET_SCHEMA, TARGET_TABLE)
 
     df = read_csv()
 
-    load_to_sql(engine, df, TARGET_TABLE)
+    load_to_sql(engine, df, TARGET_SCHEMA_TABLE)
 
-    get_row_count(engine, TARGET_TABLE)
+    get_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)
 
     logger.info("Step 02 completed successfully.")
 
