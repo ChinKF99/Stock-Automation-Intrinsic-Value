@@ -1,0 +1,8 @@
+2026-07-14 08:10:46 | INFO     | ============================================================
+2026-07-14 08:10:46 | INFO     | STEP 04 - LOAD COMPANY PROFILE INTO SQL
+2026-07-14 08:10:46 | INFO     | ============================================================
+2026-07-14 08:10:46 | INFO     | Reading company profile JSON files...
+2026-07-14 08:10:46 | INFO     | Found 20 JSON files.
+2026-07-14 08:10:46 | INFO     | 20 company profiles loaded into data frame.
+2026-07-14 08:10:46 | INFO     | Cleaning dataframe...
+2026-07-14 08:10:46 | INFO     | Finished.
