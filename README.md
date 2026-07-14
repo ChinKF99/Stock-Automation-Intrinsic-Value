@@ -2,9 +2,8 @@
 
 
 
-9 July 2026:
+14 July 2026:
 
-* Working on step04\_loading\_company\_profile\_sql.py.
-* Create, clean and tidy up generic function in sql\_utils.py such as ensure\_table(), get\_row(), count\_row(), truncate table() and much more.
-* Ensure generic function is not coded into another function (hard to trace), but instead use it in def main() only.
+* Working on api\_utils.py and Step05 and 06.
+* To revisit, step01 and 03 to see if any code is repeatable and add it to respective utils.py file.
 
