@@ -40,9 +40,9 @@ from config.config import (
 from utils.sql_utils import (
     BRONZE_SCHEMA,
     BRONZE_04_TABLE,
-    BRONZE_04_TARGET_TABLE,
+    BRONZE_04_SCHEMA_TABLE,
     ensure_table,
-    delete_all_rows,
+    truncate_table,
     get_row_count,
     bulk_insert_dataframe
 )
@@ -56,11 +56,15 @@ logger = setup_logger(Path(__file__).stem)
 # ============================================================
 
 TARGET_SCHEMA = BRONZE_SCHEMA
-TARGET_TABLE = BRONZE_04_TARGET_TABLE
+TARGET_TABLE = BRONZE_04_TABLE
+TARGET_SCHEMA_TABLE = BRONZE_04_SCHEMA_TABLE
 
+# ==========================================================
+# SQL Statements for ensure_table()
+# ==========================================================
 
 TABLE_SQL = f"""
-CREATE TABLE {BRONZE_04_TARGET_TABLE}
+CREATE TABLE {TARGET_SCHEMA_TABLE}
 (
     ticker              VARCHAR(20)     NOT NULL PRIMARY KEY,
     company_name        VARCHAR(255),
@@ -70,12 +74,12 @@ CREATE TABLE {BRONZE_04_TARGET_TABLE}
     country             VARCHAR(100),
     currency            VARCHAR(20),
     market_cap          BIGINT,
+    is_actively_trading BIT,
     price               INT,
     beta                FLOAT,
     last_dividend       FLOAT,
-    is_actively_trading BIT,
     ceo                 VARCHAR(100),
-    ipo_date            DATE
+    ipo_date            DATE,
     source              VARCHAR(30),
     load_date           DATE DEFAULT CAST(GETDATE() AS DATE),
     load_ts             DATETIME2 DEFAULT SYSDATETIME()
@@ -135,7 +139,7 @@ def read_json_files() -> pd.DataFrame:
 
                 "market_cap": profile.get("marketCap"),
 
-                "is_actively_trading": profile.get("isActivelyTrading")
+                "is_actively_trading": profile.get("isActivelyTrading"),
 
                 "price": profile.get("price"),
 
@@ -145,7 +149,9 @@ def read_json_files() -> pd.DataFrame:
 
                 "ceo": profile.get("ceo"),
 
-                "ipo_date": profile.get("ipoDate")
+                "ipo_date": profile.get("ipoDate"),
+
+                "source": file.name
             })
 
         except Exception as ex:
@@ -156,7 +162,7 @@ def read_json_files() -> pd.DataFrame:
 
     df = pd.DataFrame(rows)
 
-    logger.info(f"{len(df)} company profiles loaded.")
+    logger.info(f"{len(df)} company profiles loaded into data frame.")
 
     return df
 
@@ -164,11 +170,9 @@ def read_json_files() -> pd.DataFrame:
 # Clean Data
 # ==========================================================
 
-def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Prepare dataframe before inserting into SQL.
-    """
 
+def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    """Prepare dataframe before inserting into SQL."""
     logger.info("Cleaning dataframe...")
 
     # Remove duplicate tickers
@@ -176,18 +180,12 @@ def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
     # Convert IPO Date
     if "ipo_date" in df.columns:
-        df["ipo_date"] = pd.to_datetime(
-            df["ipo_date"],
-            errors="coerce"
-        ).dt.date
+        df["ipo_date"] = pd.to_datetime(df["ipo_date"], errors="coerce").dt.date
 
     # Convert Active flag
     if "is_actively_trading" in df.columns:
-
         df["is_actively_trading"] = (
-            df["is_actively_trading"]
-            .fillna(False)
-            .astype(bool)
+            df["is_actively_trading"].fillna(False).astype(bool)
         )
 
     return df
@@ -196,8 +194,8 @@ def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 # Main
 # ==========================================================
 
-def main():
 
+def main():
     logger.info("=" * 60)
     logger.info("STEP 04 - LOAD COMPANY PROFILE INTO SQL")
     logger.info("=" * 60)
@@ -205,28 +203,23 @@ def main():
     engine = get_sqlalchemy_engine()
 
     ensure_table(
-        engine,
-        schema=SCHEMA,
-        table=TABLE,
+        engine=engine,
+        schema=TARGET_SCHEMA,
+        table=TARGET_TABLE,
         create_sql=TABLE_SQL
     )
 
     df = read_json_files()
-
     df = clean_dataframe(df)
 
-    delete_all_rows(engine, TARGET_TABLE)
+    truncate_table(engine, TARGET_SCHEMA, TARGET_TABLE)
 
     bulk_insert_dataframe(
         engine,
-        schema=BRONZE_SCHEMA,
-        table=BRONZE_04_TABLE,
-        dataframe=df
+        schema=BRONZE_SCHEMA, table=TARGET_TABLE, dataframe=df
     )
 
-    get_row_count(engine, TARGET_TABLE)
-
-    logger.info("Rows loaded : %s", count)
+    get_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)
 
     logger.info("Finished.")
 
