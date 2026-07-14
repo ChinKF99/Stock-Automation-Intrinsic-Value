@@ -1,9 +1,5 @@
-2026-07-09 08:18:06 | INFO     | Connected SQL Server
-2026-07-09 08:18:06 | INFO     | Server   : DESKTOP-I5Q65P1\SQLEXPRESS
-2026-07-09 08:18:06 | INFO     | Database : StockAutomation
-2026-07-09 08:18:06 | INFO     | Login    : DESKTOP-I5Q65P1\Khai Foong
-2026-07-09 08:18:06 | INFO     | Verified table bronze.sp500_tickers
-2026-07-09 08:18:06 | INFO     | Deleting existing rows from bronze.sp500_tickers
-2026-07-09 08:18:06 | INFO     | Delete completed.
-2026-07-09 08:18:06 | INFO     | SQL executed successfully.
-2026-07-09 08:18:06 | INFO     | 503 rows inserted
+2026-07-14 08:10:46 | INFO     | Verified table bronze.company_profile
+2026-07-14 08:10:46 | INFO     | Table truncated bronze.company_profile
+2026-07-14 08:10:46 | INFO     | Inserting dataframe data into bronze.company_profile
+2026-07-14 08:10:46 | INFO     | Insert completed.
+2026-07-14 08:10:46 | INFO     | Total 20 rows inserted
