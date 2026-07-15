@@ -1,5 +1,4 @@
-2026-07-14 08:10:46 | INFO     | Verified table bronze.company_profile
-2026-07-14 08:10:46 | INFO     | Table truncated bronze.company_profile
-2026-07-14 08:10:46 | INFO     | Inserting dataframe data into bronze.company_profile
-2026-07-14 08:10:46 | INFO     | Insert completed.
-2026-07-14 08:10:46 | INFO     | Total 20 rows inserted
+2026-07-15 08:36:22 | INFO     | Connected SQL Server
+2026-07-15 08:36:22 | INFO     | Server   : DESKTOP-I5Q65P1\SQLEXPRESS
+2026-07-15 08:36:22 | INFO     | Database : StockAutomation
+2026-07-15 08:36:22 | INFO     | Login    : DESKTOP-I5Q65P1\Khai Foong
