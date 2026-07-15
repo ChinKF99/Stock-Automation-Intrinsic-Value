@@ -35,7 +35,7 @@ if str(PROJECT_ROOT) not in sys.path:
 # ==========================================================
 
 from config.config import (
-    SP500_CSV,
+    SP500_TICKERS_CSV_FILE_PATH,
     get_sqlalchemy_engine,
 )
 
@@ -58,7 +58,7 @@ logger = setup_logger(Path(__file__).stem)
 # Variables for File Path & Schema, Tables
 # ============================================================
 
-CSV_FILE = SP500_CSV
+CSV_FILE = SP500_TICKERS_CSV_FILE_PATH
 TARGET_SCHEMA = BRONZE_SCHEMA
 TARGET_TABLE = BRONZE_02_TABLE
 TARGET_SCHEMA_TABLE = BRONZE_02_SCHEMA_TABLE
@@ -133,25 +133,30 @@ def main():
     logger.info("BRONZE STEP 02 - LOAD CSV INTO SQL")
     logger.info("=" * 60)
 
-    engine = get_sqlalchemy_engine()
+    try:
+        engine = get_sqlalchemy_engine()
 
-    print_connection_info(engine)
+        print_connection_info(engine)
 
-    ensure_table(
-    engine=engine,
-    schema=TARGET_SCHEMA,
-    table=TARGET_TABLE,
-    create_sql=CREATE_SQL)
+        ensure_table(
+        engine=engine,
+        schema=TARGET_SCHEMA,
+        table=TARGET_TABLE,
+        create_sql=CREATE_SQL)
 
-    truncate_table(engine, TARGET_SCHEMA, TARGET_TABLE)
+        truncate_table(engine, TARGET_SCHEMA, TARGET_TABLE)
 
-    df = read_csv()
+        df = read_csv()
 
-    load_to_sql(engine, df, TARGET_SCHEMA_TABLE)
+        load_to_sql(engine, df, TARGET_SCHEMA_TABLE)
 
-    get_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)
+        get_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)
 
-    logger.info("Step 02 completed successfully.")
+        logger.info("Step 02 completed successfully.")
+
+    except Exception as ex:
+        logger.exception("Step 02 failed")
+        logger.exception(ex)
 
 if __name__ == "__main__":
     main()
