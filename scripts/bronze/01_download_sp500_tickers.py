@@ -20,18 +20,23 @@ if str(PROJECT_ROOT) not in sys.path:
 # ==========================================================
 from config.config import (
     SP500_WIKIPEDIA_URL,
-    SP500_CSV,
+    SP500_TICKERS_CSV_FILE_PATH,
     HEADERS,
     HTTP_TIMEOUT,
 )
+
+from utils.file_utils import(
+    save_csv
+)
+
 
 from config.logging_config import setup_logger
 
 logger = setup_logger(Path(__file__).stem)
 
-# ==========================================================
-# Extract S&P 500 Tickers
-# ==========================================================
+# ====================================================================
+# Extract S&P 500 Tickers from wikipedia and save it into data frame
+# ====================================================================
 def download_sp500_tickers() -> pd.DataFrame:
     """
     Download the latest S&P 500 constituent list from Wikipedia.
@@ -87,23 +92,6 @@ def download_sp500_tickers() -> pd.DataFrame:
     return df
 
 # ==========================================================
-# Save CSV
-# ==========================================================
-def save_csv(df: pd.DataFrame) -> None:
-    logger.info("Saving CSV...")
-
-    SP500_CSV.parent.mkdir(parents=True, exist_ok=True)
-
-    df.to_csv(
-        SP500_CSV,
-        index=False,
-        encoding="utf-8",
-    )
-
-    logger.info("CSV saved successfully.")
-    logger.info("Output file: %s", SP500_CSV)
-
-# ==========================================================
 # Main
 # ==========================================================
 def main():
@@ -119,14 +107,13 @@ def main():
         logger.info("Preview:")
         logger.info("\n%s", df.head().to_string(index=False))
 
-        save_csv(df)
+        save_csv(df,SP500_TICKERS_CSV_FILE_PATH)
 
         logger.info("Step 01 completed successfully.")
 
-    except Exception:
-
+    except Exception as ex:
         logger.exception("Step 01 failed.")
-
+        logger.excepion(ex)
 
 if __name__ == "__main__":
     main()
