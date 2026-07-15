@@ -16,8 +16,6 @@ data/raw/company_profile/*.json
 
 from pathlib import Path
 import sys
-import json
-import time
 import requests
 import pandas as pd
 
@@ -29,26 +27,26 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from config.config import (
     get_sqlalchemy_engine,
-    FMP_API_KEY,
     FMP_PROFILE_URL,
     COMPANY_PROFILE_FOLDER,
     FMP_BATCH_SIZE,
-    REQUEST_SLEEP_SECONDS
 )
 
 from utils.sql_utils import (
     print_connection_info,
-    BRONZE_02_TARGET_TABLE
+    BRONZE_02_SCHEMA_TABLE
 )
 
 from utils.file_utils import(
-    json_exists
+    json_exists,
+    get_json,
+    save_json,
+    wait
 )
 
 from config.logging_config import setup_logger
 
 logger = setup_logger(Path(__file__).stem)
-
 
 def get_sp500_tickers(engine):
 
@@ -56,7 +54,7 @@ def get_sp500_tickers(engine):
 
     sql = f"""
         SELECT ticker
-        FROM {BRONZE_02_TARGET_TABLE}
+        FROM {BRONZE_02_SCHEMA_TABLE}
         ORDER BY ticker
     """
 
@@ -66,42 +64,12 @@ def get_sp500_tickers(engine):
 
     return df["ticker"].tolist()
 
-
-def download_profile(ticker):
-
-    url = f"{FMP_PROFILE_URL}?symbol={ticker}&apikey={FMP_API_KEY}"
-
-    response = requests.get(
-        url,
-        timeout=30
-    )
-
-    response.raise_for_status()
-
-    return response.json()
-
-def save_json(ticker, data):
-
-    file = COMPANY_PROFILE_FOLDER / f"{ticker}.json"
-
-    with open(
-        file,
-        "w",
-        encoding="utf-8"
-    ) as f:
-
-        json.dump(
-            data,
-            f,
-            indent=4
-        )
-
 def main():
 
     logger.info("=" * 60)
     logger.info("STEP 03 - DOWNLOAD COMPANY PROFILE")
     logger.info("=" * 60)
-
+    
     engine = get_sqlalchemy_engine()
 
     print_connection_info(engine)
@@ -125,7 +93,7 @@ def main():
                 f"[{index}/{len(tickers)}] Downloading {ticker}"
             )
 
-            profile = download_profile(ticker)
+            profile = get_json(ticker, FMP_PROFILE_URL)
 
             save_json(
                 ticker,
@@ -134,7 +102,8 @@ def main():
 
             downloaded += 1
 
-            time.sleep(REQUEST_SLEEP_SECONDS)
+            # API rate limit
+            wait()
 
             if downloaded >= FMP_BATCH_SIZE:
 
@@ -151,7 +120,7 @@ def main():
             logger.error(f"{ticker}: Timeout")
 
         except Exception as ex:
-
+            logger.exception("Step 03 failed.")
             logger.exception(ex)
 
 if __name__ == "__main__":
