@@ -23,10 +23,17 @@ LOG_DIR = BASE_DIR / "logs"
 COMPANY_PROFILE_FOLDER = RAW_DATA_DIR/ "company_profile"
 
 # Create folders automatically if missing
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
 BRONZE_DATA_DIR.mkdir(parents=True, exist_ok=True)
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 COMPANY_PROFILE_FOLDER.mkdir(parents=True,exist_ok=True)
+
+# ==========================================================
+# Raw SP500 tickers file path
+# ==========================================================
+
+SP500_TICKERS_CSV_FILE_PATH = RAW_DATA_DIR / "sp500_tickers.csv"
 
 # ==========================================================
 # Load .env
@@ -101,13 +108,7 @@ HEADERS = {
 }
 
 # ==========================================================
-# Raw CSV Files
-# ==========================================================
-
-SP500_CSV = RAW_DATA_DIR / "sp500_tickers.csv"
-
-# ==========================================================
-# Data Sources
+# Wikipdia source for tickers
 # ==========================================================
 
 SP500_WIKIPEDIA_URL = (
