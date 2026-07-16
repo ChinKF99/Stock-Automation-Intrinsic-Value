@@ -10,6 +10,7 @@ the Bronze, Silver and Gold ETL pipelines.
 
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
+import pandas as pd
 from config.logging_config import setup_logger
 logger = setup_logger(__name__)
 
@@ -142,22 +143,24 @@ def truncate_table(engine, schema: str, table_name: str) -> None:
     logger.info("Table truncated %s.%s", schema, table_name)
 
 # ==========================================================
-# Execute SQL
+# Get ticker from SQL
 # ==========================================================
 
-def execute_sql(
-    engine: Engine,
-    sql: str,
-    records
-) -> None:
-    """
-    Execute a SQL statement.
+def get_sp500_tickers(scheme_table, engine):
+
+    logger.info("Reading tickers from SQL Server...")
+
+    sql = f"""
+        SELECT ticker
+        FROM {scheme_table}
+        ORDER BY ticker
     """
 
-    with engine.begin() as conn:
-        conn.execute(sql,records)
+    df = pd.read_sql(sql, engine)
 
-    logger.info("SQL executed successfully.")
+    logger.info(f"{len(df)} tickers loaded.")
+
+    return df["ticker"].tolist()
 
 # ==========================================================
 # Bulk Insert DataFrame
