@@ -37,9 +37,11 @@ if str(PROJECT_ROOT) not in sys.path:
 from config.config import (
     SP500_TICKERS_CSV_FILE_PATH,
     get_sqlalchemy_engine,
-)
+    )
 
-from config.logging_config import setup_logger
+from utils.api_utils import(
+    read_csv
+    )
 
 from utils.sql_utils import (
     BRONZE_SCHEMA,
@@ -50,7 +52,9 @@ from utils.sql_utils import (
     truncate_table,
     get_row_count,
     execute_sql
-)
+    )
+
+from config.logging_config import setup_logger
 
 logger = setup_logger(Path(__file__).stem)
 
@@ -62,25 +66,6 @@ CSV_FILE = SP500_TICKERS_CSV_FILE_PATH
 TARGET_SCHEMA = BRONZE_SCHEMA
 TARGET_TABLE = BRONZE_02_TABLE
 TARGET_SCHEMA_TABLE = BRONZE_02_SCHEMA_TABLE
-
-# ==========================================================
-# Read CSV
-# ==========================================================
-
-def read_csv():
-
-    if not CSV_FILE.exists():
-        raise FileNotFoundError(
-            f"CSV file not found:\n{CSV_FILE}"
-        )
-
-    logger.info("Reading CSV...")
-
-    df = pd.read_csv(CSV_FILE)
-
-    logger.info(f"{len(df)} rows loaded from CSV.")
-
-    return df
 
 # ==========================================================
 # SQL Statements for ensure_table()
@@ -146,7 +131,7 @@ def main():
 
         truncate_table(engine, TARGET_SCHEMA, TARGET_TABLE)
 
-        df = read_csv()
+        df = read_csv(CSV_FILE)
 
         load_to_sql(engine, df, TARGET_SCHEMA_TABLE)
 
