@@ -16,7 +16,6 @@ data/raw/company_profile/*.json
 
 from pathlib import Path
 import sys
-import requests
 import pandas as pd
 
 CURRENT_FILE = Path(__file__).resolve()
@@ -37,12 +36,7 @@ from utils.sql_utils import (
     BRONZE_02_SCHEMA_TABLE
 )
 
-from utils.file_utils import(
-    json_exists,
-    get_json,
-    save_json,
-    wait
-)
+from utils.download_utils import download_endpoint
 
 from config.logging_config import setup_logger
 
@@ -66,62 +60,19 @@ def get_sp500_tickers(engine):
 
 def main():
 
-    logger.info("=" * 60)
-    logger.info("STEP 03 - DOWNLOAD COMPANY PROFILE")
-    logger.info("=" * 60)
-    
     engine = get_sqlalchemy_engine()
 
     print_connection_info(engine)
 
     tickers = get_sp500_tickers(engine)
 
-    downloaded = 0
-
-    for index, ticker in enumerate(tickers, start=1):
-
-        try:
-            if json_exists(COMPANY_PROFILE_FOLDER, ticker):
-
-                logger.info(
-                    f"[{index}/{len(tickers)}] {ticker} already exists. Skipped."
-                )
-
-                continue
-
-            logger.info(
-                f"[{index}/{len(tickers)}] Downloading {ticker}"
-            )
-
-            profile = get_json(ticker, FMP_PROFILE_URL)
-
-            save_json(
-                ticker,
-                profile
-            )
-
-            downloaded += 1
-
-            # API rate limit
-            wait()
-
-            if downloaded >= FMP_BATCH_SIZE:
-
-                logger.info("Today's batch limit reached.")
-
-                break
-
-        except requests.exceptions.HTTPError as ex:
-
-            logger.error(f"{ticker}: HTTP Error {ex}")
-
-        except requests.exceptions.Timeout:
-
-            logger.error(f"{ticker}: Timeout")
-
-        except Exception as ex:
-            logger.exception("Step 03 failed.")
-            logger.exception(ex)
+    download_endpoint(
+        tickers,
+        FMP_PROFILE_URL,
+        COMPANY_PROFILE_FOLDER,
+        "Company Profile",
+        FMP_BATCH_SIZE
+    )
 
 if __name__ == "__main__":
     main()
