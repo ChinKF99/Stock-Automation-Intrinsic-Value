@@ -2,8 +2,9 @@
 
 
 
-14 July 2026:
+16 July 2026:
 
-* Working on api\_utils.py and Step05 and 06.
-* To revisit, step01 and 03 to see if any code is repeatable and add it to respective utils.py file.
+* To check step03, get\_sp500\_tickers function (Repeatable in other scripts, to put in utils file)
+* To utilize the get\_sp500\_tickers function (Import from utils file)
+* To continue step05
 
