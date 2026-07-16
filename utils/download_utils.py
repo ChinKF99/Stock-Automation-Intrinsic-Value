@@ -73,6 +73,7 @@ def download_endpoint(
 
     for index, ticker in enumerate(tickers, start=1):
         try:
+            
             if json_exists(output_folder, ticker):
                 logger.info(
                     f"[{index}/{len(tickers)}] {ticker} already exists. Skipped.")
@@ -89,7 +90,7 @@ def download_endpoint(
 
             data = get_json(params,endpoint_url)
 
-            save_json(params,data)
+            save_json(params,data, output_folder)
 
             downloaded += 1
 
