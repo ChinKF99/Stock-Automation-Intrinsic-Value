@@ -1,6 +1,4 @@
-2026-07-16 19:53:27 | INFO     | Connected SQL Server
-2026-07-16 19:53:27 | INFO     | Server   : DESKTOP-I5Q65P1\SQLEXPRESS
-2026-07-16 19:53:27 | INFO     | Database : StockAutomation
-2026-07-16 19:53:27 | INFO     | Login    : DESKTOP-I5Q65P1\Khai Foong
-2026-07-16 19:53:27 | INFO     | Reading tickers from SQL Server...
-2026-07-16 19:53:27 | INFO     | 503 tickers loaded.
+2026-07-16 20:33:48 | INFO     | Connected SQL Server
+2026-07-16 20:33:48 | INFO     | Server   : DESKTOP-I5Q65P1\SQLEXPRESS
+2026-07-16 20:33:48 | INFO     | Database : StockAutomation
+2026-07-16 20:33:48 | INFO     | Login    : DESKTOP-I5Q65P1\Khai Foong
