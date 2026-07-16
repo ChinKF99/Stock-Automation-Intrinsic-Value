@@ -25,7 +25,7 @@ from config.config import (
     HTTP_TIMEOUT,
 )
 
-from utils.file_utils import(
+from utils.api_utils import(
     save_csv
 )
 
