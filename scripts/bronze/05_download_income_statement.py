@@ -48,10 +48,10 @@ def main():
 
     print_connection_info(engine)
 
-    tickers = get_sp500_tickers(BRONZE_02_SCHEMA_TABLE, engine)
+    # tickers = get_sp500_tickers(BRONZE_02_SCHEMA_TABLE, engine)
 
     download_endpoint(
-        tickers,
+        ["APPL"], #to replace with tickers variable after testing.
         FMP_INCOME_URL,
         INCOME_STATEMENT_FOLDER,
         "Company Profile",
