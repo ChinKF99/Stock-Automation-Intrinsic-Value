@@ -1,11 +1,4 @@
-2026-07-15 07:58:52 | INFO     | ============================================================
-2026-07-15 07:58:52 | INFO     | BRONZE STEP 02 - LOAD CSV INTO SQL
-2026-07-15 07:58:52 | INFO     | ============================================================
-2026-07-15 07:58:52 | INFO     | Reading CSV...
-2026-07-15 07:58:52 | INFO     | 503 rows loaded from CSV.
-2026-07-15 07:58:52 | ERROR    | Step 02 failed
-Traceback (most recent call last):
-  File "c:\Users\Khai Foong\Desktop\Projects\Stock Automation Intrinsic Value\scripts\bronze\02_load_sp500_sql.py", line 153, in main
-    gt_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)
-    ^^^^^^^^^^^^
-NameError: name 'gt_row_count' is not defined. Did you mean: 'get_row_count'?
+2026-07-16 08:28:31 | INFO     | ============================================================
+2026-07-16 08:28:31 | INFO     | BRONZE STEP 02 - LOAD CSV INTO SQL
+2026-07-16 08:28:31 | INFO     | ============================================================
+2026-07-16 08:28:31 | INFO     | Step 02 completed successfully.
