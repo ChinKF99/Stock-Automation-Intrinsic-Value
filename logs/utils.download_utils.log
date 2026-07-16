@@ -1,66 +1,8 @@
-2026-07-16 19:53:27 | INFO     | ============================================================
-2026-07-16 19:53:27 | INFO     | Downloading Company Profile
-2026-07-16 19:53:27 | INFO     | ============================================================
-2026-07-16 19:53:27 | INFO     | [1/503] Downloading A
-2026-07-16 19:53:28 | ERROR    | A: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=A&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:28 | INFO     | [2/503] Downloading AAPL
-2026-07-16 19:53:30 | INFO     | [3/503] Downloading ABBV
-2026-07-16 19:53:31 | INFO     | [4/503] Downloading ABNB
-2026-07-16 19:53:33 | ERROR    | ABNB: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=ABNB&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:33 | INFO     | [5/503] Downloading ABT
-2026-07-16 19:53:34 | ERROR    | ABT: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=ABT&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:34 | INFO     | [6/503] Downloading ACGL
-2026-07-16 19:53:35 | ERROR    | ACGL: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=ACGL&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:35 | INFO     | [7/503] Downloading ACN
-2026-07-16 19:53:36 | ERROR    | ACN: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=ACN&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:36 | INFO     | [8/503] Downloading ADBE
-2026-07-16 19:53:38 | INFO     | [9/503] Downloading ADI
-2026-07-16 19:53:39 | ERROR    | ADI: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=ADI&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:39 | INFO     | [10/503] Downloading ADM
-2026-07-16 19:53:40 | ERROR    | ADM: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=ADM&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:40 | INFO     | [11/503] Downloading ADP
-2026-07-16 19:53:41 | ERROR    | ADP: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=ADP&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:41 | INFO     | [12/503] Downloading ADSK
-2026-07-16 19:53:43 | ERROR    | ADSK: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=ADSK&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:43 | INFO     | [13/503] Downloading AEE
-2026-07-16 19:53:44 | ERROR    | AEE: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=AEE&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:44 | INFO     | [14/503] Downloading AEP
-2026-07-16 19:53:45 | ERROR    | AEP: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=AEP&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:45 | INFO     | [15/503] Downloading AES
-2026-07-16 19:53:46 | ERROR    | AES: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=AES&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:46 | INFO     | [16/503] Downloading AFL
-2026-07-16 19:53:48 | ERROR    | AFL: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=AFL&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:48 | INFO     | [17/503] Downloading AIG
-2026-07-16 19:53:49 | ERROR    | AIG: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=AIG&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:49 | INFO     | [18/503] Downloading AIZ
-2026-07-16 19:53:50 | ERROR    | AIZ: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=AIZ&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:50 | INFO     | [19/503] Downloading AJG
-2026-07-16 19:53:51 | ERROR    | AJG: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=AJG&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:51 | INFO     | [20/503] Downloading AKAM
-2026-07-16 19:53:53 | ERROR    | AKAM: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=AKAM&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:53 | INFO     | [21/503] Downloading ALB
-2026-07-16 19:53:54 | ERROR    | ALB: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=ALB&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:54 | INFO     | [22/503] Downloading ALGN
-2026-07-16 19:53:55 | ERROR    | ALGN: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=ALGN&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:55 | INFO     | [23/503] Downloading ALL
-2026-07-16 19:53:56 | ERROR    | ALL: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=ALL&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:56 | INFO     | [24/503] Downloading ALLE
-2026-07-16 19:53:58 | ERROR    | ALLE: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=ALLE&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:58 | INFO     | [25/503] Downloading AMAT
-2026-07-16 19:53:59 | ERROR    | AMAT: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=AMAT&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:53:59 | INFO     | [26/503] Downloading AMCR
-2026-07-16 19:54:00 | ERROR    | AMCR: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=AMCR&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:54:00 | INFO     | [27/503] Downloading AMD
-2026-07-16 19:54:02 | INFO     | [28/503] Downloading AME
-2026-07-16 19:54:03 | ERROR    | AME: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=AME&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:54:03 | INFO     | [29/503] Downloading AMGN
-2026-07-16 19:54:15 | ERROR    | AMGN: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=AMGN&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:54:15 | INFO     | [30/503] Downloading AMP
-2026-07-16 19:54:16 | ERROR    | AMP: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=AMP&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:54:16 | INFO     | [31/503] Downloading AMT
-2026-07-16 19:54:18 | ERROR    | AMT: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=AMT&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 19:54:18 | INFO     | [32/503] Downloading AMZN
-2026-07-16 19:54:19 | INFO     | Today's batch limit reached.
-2026-07-16 19:54:19 | INFO     | ============================================================
-2026-07-16 19:54:19 | INFO     | Company Profile Finished
-2026-07-16 19:54:19 | INFO     | ============================================================
+2026-07-16 20:33:48 | INFO     | ============================================================
+2026-07-16 20:33:48 | INFO     | Downloading Company Profile
+2026-07-16 20:33:48 | INFO     | ============================================================
+2026-07-16 20:33:48 | INFO     | [1/1] Downloading APPL
+2026-07-16 20:33:50 | ERROR    | APPL: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=APPL&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
+2026-07-16 20:33:50 | INFO     | ============================================================
+2026-07-16 20:33:50 | INFO     | Company Profile Finished
+2026-07-16 20:33:50 | INFO     | ============================================================
