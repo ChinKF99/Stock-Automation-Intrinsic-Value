@@ -1,0 +1,52 @@
+2026-07-16 08:19:57 | INFO     | ============================================================
+2026-07-16 08:19:57 | INFO     | Downloading Company Profile
+2026-07-16 08:19:57 | INFO     | ============================================================
+2026-07-16 08:19:57 | INFO     | [1/503] A already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [2/503] AAPL already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [3/503] ABBV already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [4/503] ABNB already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [5/503] ABT already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [6/503] ACGL already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [7/503] ACN already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [8/503] ADBE already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [9/503] ADI already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [10/503] ADM already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [11/503] ADP already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [12/503] ADSK already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [13/503] AEE already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [14/503] AEP already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [15/503] AES already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [16/503] AFL already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [17/503] AIG already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [18/503] AIZ already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [19/503] AJG already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [20/503] AKAM already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [21/503] ALB already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [22/503] ALGN already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [23/503] ALL already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [24/503] ALLE already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [25/503] AMAT already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [26/503] AMCR already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [27/503] AMD already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [28/503] AME already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [29/503] AMGN already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [30/503] AMP already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [31/503] AMT already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [32/503] AMZN already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [33/503] ANET already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [34/503] AON already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [35/503] AOS already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [36/503] APA already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [37/503] APD already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [38/503] APH already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [39/503] APO already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [40/503] APP already exists. Skipped.
+2026-07-16 08:19:57 | INFO     | [41/503] Downloading APTV
+2026-07-16 08:19:58 | INFO     | [42/503] Downloading ARE
+2026-07-16 08:20:00 | INFO     | [43/503] Downloading ARES
+2026-07-16 08:20:01 | INFO     | [44/503] Downloading ATO
+2026-07-16 08:20:03 | INFO     | [45/503] Downloading AVB
+2026-07-16 08:20:04 | INFO     | Today's batch limit reached.
+2026-07-16 08:20:04 | INFO     | ============================================================
+2026-07-16 08:20:04 | INFO     | Company Profile Finished
+2026-07-16 08:20:04 | INFO     | ============================================================
