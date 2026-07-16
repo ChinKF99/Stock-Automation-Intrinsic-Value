@@ -16,7 +16,6 @@ data/raw/income_statement/*.json
 
 from pathlib import Path
 import sys
-import pandas as pd
 
 CURRENT_FILE = Path(__file__).resolve()
 PROJECT_ROOT = CURRENT_FILE.parents[2]
@@ -26,13 +25,14 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from config.config import (
     get_sqlalchemy_engine,
-    FMP_PROFILE_URL,
-    COMPANY_PROFILE_FOLDER,
+    FMP_INCOME_URL,
+    INCOME_STATEMENT_FOLDER,
     FMP_BATCH_SIZE,
 )
 
 from utils.sql_utils import (
     print_connection_info,
+    get_sp500_tickers,
     BRONZE_02_SCHEMA_TABLE
 )
 
@@ -42,32 +42,21 @@ from config.logging_config import setup_logger
 
 logger = setup_logger(Path(__file__).stem)
 
-from utils.download_utils import download_endpoint
-
-
-def income_params(_):
-
-    return {
-        "limit": 10
-    }
-
-
 def main():
 
+    engine = get_sqlalchemy_engine()
+
+    print_connection_info(engine)
+
+    tickers = get_sp500_tickers(BRONZE_02_SCHEMA_TABLE, engine)
+
     download_endpoint(
-
-        csv_file=SP500_CSV,
-
-        endpoint_url=FMP_INCOME_URL,
-
-        output_folder=INCOME_STATEMENT_FOLDER,
-
-        endpoint_name="Income Statement",
-
-        params_builder=income_params
-
+        tickers,
+        FMP_INCOME_URL,
+        INCOME_STATEMENT_FOLDER,
+        "Company Profile",
+        FMP_BATCH_SIZE
     )
-
 
 if __name__ == "__main__":
     main()
