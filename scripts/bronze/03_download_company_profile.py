@@ -16,7 +16,6 @@ data/raw/company_profile/*.json
 
 from pathlib import Path
 import sys
-import pandas as pd
 
 CURRENT_FILE = Path(__file__).resolve()
 PROJECT_ROOT = CURRENT_FILE.parents[2]
@@ -33,6 +32,7 @@ from config.config import (
 
 from utils.sql_utils import (
     print_connection_info,
+    get_sp500_tickers,
     BRONZE_02_SCHEMA_TABLE
 )
 
@@ -42,29 +42,13 @@ from config.logging_config import setup_logger
 
 logger = setup_logger(Path(__file__).stem)
 
-def get_sp500_tickers(engine):
-
-    logger.info("Reading tickers from SQL Server...")
-
-    sql = f"""
-        SELECT ticker
-        FROM {BRONZE_02_SCHEMA_TABLE}
-        ORDER BY ticker
-    """
-
-    df = pd.read_sql(sql, engine)
-
-    logger.info(f"{len(df)} tickers loaded.")
-
-    return df["ticker"].tolist()
-
 def main():
 
     engine = get_sqlalchemy_engine()
 
     print_connection_info(engine)
 
-    tickers = get_sp500_tickers(engine)
+    tickers = get_sp500_tickers(BRONZE_02_SCHEMA_TABLE, engine)
 
     download_endpoint(
         tickers,
