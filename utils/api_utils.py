@@ -92,9 +92,9 @@ def get_json( ticker, fmp_endpoint, params=None):
 # Save JSON
 # ==========================================================
 
-def save_json(ticker, data):
+def save_json(ticker, data, output_folder):
 
-    file = COMPANY_PROFILE_FOLDER / f"{ticker}.json"
+    file = output_folder / f"{ticker}.json"
 
     with open(
         file,
