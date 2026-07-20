@@ -41,6 +41,7 @@ from utils.sql_utils import (
     BRONZE_SCHEMA,
     BRONZE_04_TABLE,
     BRONZE_04_SCHEMA_TABLE,
+    print_connection_info,
     ensure_table,
     truncate_table,
     get_row_count,
@@ -119,7 +120,7 @@ def read_json_files() -> pd.DataFrame:
                 logger.warning(f"{file.name} is empty.")
                 continue
 
-            profile = data[0]
+            profile = data
 
             rows.append({
 
@@ -201,6 +202,8 @@ def main():
     logger.info("=" * 60)
 
     engine = get_sqlalchemy_engine()
+
+    print_connection_info(engine)
 
     ensure_table(
         engine=engine,
