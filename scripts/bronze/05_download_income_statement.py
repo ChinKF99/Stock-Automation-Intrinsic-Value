@@ -48,13 +48,17 @@ def main():
 
     print_connection_info(engine)
 
+    # Use this code if you have FMP Plan other than "BASIC"
     # tickers = get_sp500_tickers(BRONZE_02_SCHEMA_TABLE, engine)
 
+    # Use this code if you have "BASIC" FMP Plan
+    tickers = ["AAPL", "ADBE", "AMD","INTC", "MSFT", "NVDA", "PLTR", "GOOGL", "META", "NFLX","AMZN"]
+    
     download_endpoint(
-        ["APPL"], #to replace with tickers variable after testing.
+        tickers,
         FMP_INCOME_URL,
         INCOME_STATEMENT_FOLDER,
-        "Company Profile",
+        "Income Statement",
         FMP_BATCH_SIZE
     )
 
