@@ -1,8 +1,17 @@
-2026-07-14 08:10:46 | INFO     | ============================================================
-2026-07-14 08:10:46 | INFO     | STEP 04 - LOAD COMPANY PROFILE INTO SQL
-2026-07-14 08:10:46 | INFO     | ============================================================
-2026-07-14 08:10:46 | INFO     | Reading company profile JSON files...
-2026-07-14 08:10:46 | INFO     | Found 20 JSON files.
-2026-07-14 08:10:46 | INFO     | 20 company profiles loaded into data frame.
-2026-07-14 08:10:46 | INFO     | Cleaning dataframe...
-2026-07-14 08:10:46 | INFO     | Finished.
+2026-07-20 15:58:12 | INFO     | ============================================================
+2026-07-20 15:58:12 | INFO     | STEP 04 - LOAD COMPANY PROFILE INTO SQL
+2026-07-20 15:58:12 | INFO     | ============================================================
+2026-07-20 15:58:13 | INFO     | Connected SQL Server
+2026-07-20 15:58:13 | INFO     | Server   : DESKTOP-I5Q65P1\SQLEXPRESS
+2026-07-20 15:58:13 | INFO     | Database : StockAutomation
+2026-07-20 15:58:13 | INFO     | Login    : DESKTOP-I5Q65P1\Khai Foong
+2026-07-20 15:58:13 | INFO     | Verified table bronze.company_profile
+2026-07-20 15:58:13 | INFO     | Reading company profile JSON files...
+2026-07-20 15:58:13 | INFO     | Found 11 JSON files.
+2026-07-20 15:58:13 | INFO     | 11 company profiles loaded into data frame.
+2026-07-20 15:58:13 | INFO     | Cleaning dataframe...
+2026-07-20 15:58:13 | INFO     | Table truncated bronze.company_profile
+2026-07-20 15:58:13 | INFO     | Inserting dataframe data into bronze.company_profile
+2026-07-20 15:58:13 | INFO     | Insert completed.
+2026-07-20 15:58:13 | INFO     | Total 11 rows inserted
+2026-07-20 15:58:13 | INFO     | Finished.
