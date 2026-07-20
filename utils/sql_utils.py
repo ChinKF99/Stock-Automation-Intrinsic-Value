@@ -8,12 +8,21 @@ the Bronze, Silver and Gold ETL pipelines.
 ============================================================
 """
 
+import os
+import sys
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 import pandas as pd
 from config.logging_config import setup_logger
-logger = setup_logger(__name__)
 
+# 1. Get the base name (e.g., "script.py")
+raw_name = os.path.basename(sys.argv[0])
+
+# 2. Separate name from extension and add .log (e.g., "script.log")
+log_name = os.path.splitext(raw_name)[0]
+
+# 3. Initialize the logger
+logger = setup_logger(log_name)
 
 # ==========================================================
 # Connection Information
