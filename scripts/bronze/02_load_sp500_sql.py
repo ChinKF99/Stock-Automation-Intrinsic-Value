@@ -50,8 +50,7 @@ from utils.sql_utils import (
     print_connection_info,
     ensure_table,
     truncate_table,
-    get_row_count,
-    execute_sql
+    get_row_count
     )
 
 from config.logging_config import setup_logger
@@ -106,7 +105,8 @@ def load_to_sql(engine, df, target_table):
 
     records = df.to_dict(orient="records")
 
-    execute_sql(engine,insert_sql,records)
+    with engine.begin() as conn:
+        conn.execute(insert_sql,records)
 
 # ==========================================================
 # Main
@@ -117,10 +117,10 @@ def main():
     logger.info("=" * 60)
     logger.info("BRONZE STEP 02 - LOAD CSV INTO SQL")
     logger.info("=" * 60)
+    
 
     try:
         engine = get_sqlalchemy_engine()
-
         print_connection_info(engine)
 
         ensure_table(
