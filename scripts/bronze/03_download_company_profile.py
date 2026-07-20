@@ -46,9 +46,11 @@ def main():
 
     engine = get_sqlalchemy_engine()
 
-    print_connection_info(engine)
+    # Use this code if you have FMP Plan other than "BASIC"
+    # tickers = get_sp500_tickers(BRONZE_02_SCHEMA_TABLE, engine)
 
-    tickers = get_sp500_tickers(BRONZE_02_SCHEMA_TABLE, engine)
+    # Use this code if you have "BASIC" FMP Plan
+    tickers = ["AAPL", "ADBE", "AMD","INTC", "MSFT", "NVDA", "PLTR", "GOOGL", "META", "NFLX","AMZN"]
 
     download_endpoint(
         tickers,
