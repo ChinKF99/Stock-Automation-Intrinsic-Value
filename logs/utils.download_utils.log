@@ -1,8 +1,0 @@
-2026-07-16 20:33:48 | INFO     | ============================================================
-2026-07-16 20:33:48 | INFO     | Downloading Company Profile
-2026-07-16 20:33:48 | INFO     | ============================================================
-2026-07-16 20:33:48 | INFO     | [1/1] Downloading APPL
-2026-07-16 20:33:50 | ERROR    | APPL: HTTP Error 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/income-statement?symbol=APPL&apikey=W7YHIOq5t9jOTqlIurQkFZ35JtJyE2hQ
-2026-07-16 20:33:50 | INFO     | ============================================================
-2026-07-16 20:33:50 | INFO     | Company Profile Finished
-2026-07-16 20:33:50 | INFO     | ============================================================
