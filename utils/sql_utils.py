@@ -59,6 +59,8 @@ BRONZE_02_TABLE = "sp500_tickers"
 BRONZE_02_SCHEMA_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_02_TABLE}"
 BRONZE_04_TABLE = "company_profile"
 BRONZE_04_SCHEMA_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_04_TABLE}"
+BRONZE_06_TABLE = 'income_statement'
+BRONZE_06_SCHEMA_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_06_TABLE}"
 
 # ==========================================================
 # Ensure Schema & Table Exists
