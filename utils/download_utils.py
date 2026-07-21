@@ -123,5 +123,5 @@ def download_endpoint(
             logger.exception(ex)
 
     logger.info("=" * 60)
-    logger.info(f"{endpoint_name} Finished")
+    logger.info(f"Finished")
     logger.info("=" * 60)

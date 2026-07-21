@@ -109,11 +109,13 @@ def main():
 
         save_csv(df,SP500_TICKERS_CSV_FILE_PATH)
 
-        logger.info("Step 01 completed successfully.")
-
     except Exception as ex:
         logger.exception("Step 01 failed.")
         logger.excepion(ex)
 
+    logger.info("=" * 60)
+    logger.info(f"Finished")
+    logger.info("=" * 60)
+    
 if __name__ == "__main__":
     main()

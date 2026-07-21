@@ -6,7 +6,7 @@ Purpose:
     Load company_profile.csv into SQL Server.
 
 Source:
-    data/raw/company_profile.csv
+    data/raw/company_profile/.json file
 
 Target:
     bronze.company_profile
@@ -61,33 +61,6 @@ TARGET_TABLE = BRONZE_04_TABLE
 TARGET_SCHEMA_TABLE = BRONZE_04_SCHEMA_TABLE
 
 # ==========================================================
-# SQL Statements for ensure_table()
-# ==========================================================
-
-TABLE_SQL = f"""
-CREATE TABLE {TARGET_SCHEMA_TABLE}
-(
-    ticker              VARCHAR(20)     NOT NULL PRIMARY KEY,
-    company_name        VARCHAR(255),
-    exchange            VARCHAR(50),
-    sector              VARCHAR(100),
-    industry            VARCHAR(150),
-    country             VARCHAR(100),
-    currency            VARCHAR(20),
-    market_cap          BIGINT,
-    is_actively_trading BIT,
-    price               INT,
-    beta                FLOAT,
-    last_dividend       FLOAT,
-    ceo                 VARCHAR(100),
-    ipo_date            DATE,
-    source              VARCHAR(30),
-    load_date           DATE DEFAULT CAST(GETDATE() AS DATE),
-    load_ts             DATETIME2 DEFAULT SYSDATETIME()
-);
-"""
-
-# ==========================================================
 # Read JSON file
 # ==========================================================
 
@@ -115,48 +88,14 @@ def read_json_files() -> pd.DataFrame:
             with open(file, "r", encoding="utf-8") as f:
                 data = json.load(f)
 
-            # FMP Profile endpoint returns a LIST
             if not data:
                 logger.warning(f"{file.name} is empty.")
                 continue
 
-            profile = data
-
-            rows.append({
-
-                "ticker": profile.get("symbol"),
-
-                "company_name": profile.get("companyName"),
-
-                "exchange": profile.get("exchange"),
-
-                "sector": profile.get("sector"),
-
-                "industry": profile.get("industry"),
-
-                "country": profile.get("country"),
-                
-                "currency": profile.get("currency"),
-
-                "market_cap": profile.get("marketCap"),
-
-                "is_actively_trading": profile.get("isActivelyTrading"),
-
-                "price": profile.get("price"),
-
-                "beta": profile.get("beta"),
-
-                "last_dividend": profile.get("lastDividend"),
-
-                "ceo": profile.get("ceo"),
-
-                "ipo_date": profile.get("ipoDate"),
-
-                "source": file.name
-            })
+            if isinstance(data, dict):
+                rows.append(data)
 
         except Exception as ex:
-
             logger.exception(
                 f"Failed reading {file.name}: {ex}"
             )
@@ -168,33 +107,90 @@ def read_json_files() -> pd.DataFrame:
     return df
 
 # ==========================================================
-# Clean Data
+# Clean Data Frame (Keep whatever column needed only)
 # ==========================================================
 
+def clean_dataframe(df):
 
-def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
-    """Prepare dataframe before inserting into SQL."""
     logger.info("Cleaning dataframe...")
 
-    # Remove duplicate tickers
-    df = df.drop_duplicates(subset=["ticker"])
+    keep_columns = [
+        "symbol",
+        "companyName",
+        "exchange",
+        "sector",
+        "industry",
+        "country",
+        "currency",
+        "marketCap",
+        "isActivelyTrading",
+        "price",
+        "beta",
+        "lastDividend",
+        "ceo",
+        "ipoDate"
+    ]
 
-    # Convert IPO Date
-    if "ipo_date" in df.columns:
-        df["ipo_date"] = pd.to_datetime(df["ipo_date"], errors="coerce").dt.date
+    df = df[keep_columns].copy()
+    
+    df.columns = [
+        "symbol",
+        "company_name",
+        "exchange",
+        "sector",
+        "industry",
+        "country",
+        "currency",
+        "market_cap",
+        "is_actively_trading",
+        "price",
+        "beta",
+        "last_dividend",
+        "ceo",
+        "ipo_date"
+    ]
 
-    # Convert Active flag
-    if "is_actively_trading" in df.columns:
-        df["is_actively_trading"] = (
-            df["is_actively_trading"].fillna(False).astype(bool)
-        )
+    # # Convert IPO Date
+    # if "ipo_date" in df.columns:
+    #     df["ipo_date"] = pd.to_datetime(df["ipo_date"], errors="coerce").dt.date
+
+    # # Convert Active flag
+    # if "is_actively_trading" in df.columns:
+    #     df["is_actively_trading"] = (
+    #         df["is_actively_trading"].fillna(False).astype(bool)
+    #     )
 
     return df
 
 # ==========================================================
-# Main
+# SQL Statements for ensure_table()
 # ==========================================================
 
+TABLE_SQL = f"""
+CREATE TABLE {TARGET_SCHEMA_TABLE}
+(
+    symbol              VARCHAR(20)     NOT NULL PRIMARY KEY,
+    company_name        VARCHAR(255),
+    exchange            VARCHAR(50),
+    sector              VARCHAR(100),
+    industry            VARCHAR(150),
+    country             VARCHAR(100),
+    currency            VARCHAR(20),
+    market_cap          BIGINT,
+    is_actively_trading BIT,
+    price               INT,
+    beta                FLOAT,
+    last_dividend       FLOAT,
+    ceo                 VARCHAR(100),
+    ipo_date            DATE,
+    load_date           DATE DEFAULT CAST(GETDATE() AS DATE),
+    load_ts             DATETIME2 DEFAULT SYSDATETIME()
+);
+"""
+
+# ==========================================================
+# Main
+# ==========================================================
 
 def main():
     logger.info("=" * 60)
@@ -215,6 +211,8 @@ def main():
     df = read_json_files()
     df = clean_dataframe(df)
 
+    df.to_json('output_company_profile.json')
+
     truncate_table(engine, TARGET_SCHEMA, TARGET_TABLE)
 
     bulk_insert_dataframe(
@@ -224,8 +222,9 @@ def main():
 
     get_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)
 
-    logger.info("Finished.")
-
+    logger.info("=" * 60)
+    logger.info(f"Finished")
+    logger.info("=" * 60)
 
 if __name__ == "__main__":
     main()

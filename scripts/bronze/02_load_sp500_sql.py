@@ -137,11 +137,13 @@ def main():
 
         get_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)
 
-        logger.info("Step 02 completed successfully.")
-
     except Exception as ex:
         logger.exception("Step 02 failed")
         logger.exception(ex)
+
+    logger.info("=" * 60)
+    logger.info(f"Finished")
+    logger.info("=" * 60)
 
 if __name__ == "__main__":
     main()
