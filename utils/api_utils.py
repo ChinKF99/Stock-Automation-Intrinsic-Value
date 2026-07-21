@@ -96,12 +96,7 @@ def get_json( ticker, fmp_endpoint, params=None):
 
     response.raise_for_status()
 
-    # return response.json()
-
-    data = response.json() # To delete after testing
-
-    # Safely return the first dictionary if the list is not empty (to delete after testing)
-    return data[0] if isinstance(data, list) and data else data
+    return response.json()
 
 # ==========================================================
 # Save JSON
