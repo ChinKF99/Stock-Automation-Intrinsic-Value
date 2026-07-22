@@ -14,7 +14,6 @@ from config.config import (
     FMP_API_KEY,
     HTTP_TIMEOUT,
     REQUEST_SLEEP_SECONDS,
-    COMPANY_PROFILE_FOLDER
 )
 
 from config.logging_config import setup_logger
@@ -68,7 +67,7 @@ def save_csv(df: pd.DataFrame, file_path: Path):
     logger.info("Output file: %s", file_path)
 
 # ==============================================================
-# Generic get request and parse JSON into Python dictionary
+# Get Request for FMP End point to get JSON File.
 # ==============================================================
 
 def get_json( ticker, fmp_endpoint, params=None):
@@ -99,7 +98,7 @@ def get_json( ticker, fmp_endpoint, params=None):
     return response.json()
 
 # ==========================================================
-# Save JSON
+# Save the JSON file from Get Request to file directory
 # ==========================================================
 
 def save_json(ticker, data, output_folder):
@@ -119,7 +118,7 @@ def save_json(ticker, data, output_folder):
         )
 
 # ==========================================================
-# Check if json file existed
+# Check if JSON file already existed in the file directory
 # ==========================================================
 def json_exists(folder: Path, ticker: str) -> bool:
     return (folder / f"{ticker}.json").exists()
@@ -131,3 +130,67 @@ def json_exists(folder: Path, ticker: str) -> bool:
 def wait():
 
     time.sleep(REQUEST_SLEEP_SECONDS)
+
+# ==========================================================
+# Read JSON file and convert it to Pandas data frame
+# ========================================================== 
+
+def read_json_files(end_point_name, folder_name) -> pd.DataFrame:
+   
+    # Read all company profile JSON files and return a single DataFrame.
+    
+    logger.info(f"Reading {end_point_name} JSON files...") # e.g. "company_profile", "income_statement"
+
+    json_files = sorted(folder_name.glob("*.json"))
+
+    if not json_files:
+        raise FileNotFoundError(
+            f"No JSON files found in:\n{folder_name}"
+        )
+
+    logger.info(f"Found {len(json_files)} JSON files.")
+
+    rows = []
+
+    for file in json_files:
+
+        try:
+
+            with open(file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+
+            if not data:
+                logger.warning(f"{file.name} is empty.")
+                continue
+            
+            # -----------------------------
+            # Case 1
+            # JSON Object
+            # {
+            #    ...
+            # }
+            # -----------------------------
+            if isinstance(data, dict):
+                rows.append(data)
+
+            # -----------------------------
+            # Case 2
+            # JSON Array
+            # [
+            #   {...},
+            #   {...}
+            # ]
+            # -----------------------------
+            elif isinstance(data, list):
+                rows.extend(data)
+
+        except Exception as ex:
+            logger.exception(
+                f"Failed reading {file.name}: {ex}"
+            )
+
+    df = pd.DataFrame(rows)
+    
+    logger.info(f"{len(df)} company profiles loaded into data frame.")
+
+    return df

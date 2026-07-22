@@ -52,6 +52,10 @@ from utils.sql_utils import (
     bulk_insert_dataframe
 )
 
+from utils.csv_json_utils import(
+    read_json_files
+)
+
 from config.logging_config import setup_logger
 
 logger = setup_logger(Path(__file__).stem)
@@ -63,49 +67,6 @@ logger = setup_logger(Path(__file__).stem)
 TARGET_SCHEMA = BRONZE_SCHEMA
 TARGET_TABLE = BRONZE_06_TABLE
 TARGET_SCHEMA_TABLE = BRONZE_06_SCHEMA_TABLE
-
-# ==========================================================
-# Read JSON file
-# ==========================================================
-
-def read_json_files():
-
-    logger.info("Reading income statement JSON files...")
-
-    json_files = sorted(INCOME_STATEMENT_FOLDER.glob("*.json"))
-
-    if not json_files:
-        raise FileNotFoundError(
-            f"No JSON files found in:\n{INCOME_STATEMENT_FOLDER}"
-        )
-
-    logger.info(f"Found {len(json_files)} JSON files.")
-
-    rows = []
-
-    for file in json_files:
-
-        try:
-            with open(file, encoding="utf-8") as f:
-                data = json.load(f)
-
-            if not data:
-                logger.warning(f"{file.name} is empty.")
-                continue
-
-            for row in data:
-                rows.append(row)
-
-        except Exception as ex:
-             logger.exception(
-                f"Failed reading {file.name}: {ex}"
-            )
-        
-    df = pd.DataFrame(rows)
-
-    logger.info(f"{len(df)} income_statement loaded into data frame.")
-
-    return df
 
 # ==========================================================
 # Clean Data Frame (Keep whatever column needed only)
@@ -203,7 +164,7 @@ def main():
         create_sql=TABLE_SQL
     )
 
-    df = read_json_files()
+    df = read_json_files("Income Statement", INCOME_STATEMENT_FOLDER)
     df = clean_dataframe(df)
 
     df.to_json('output_income_statement.json')

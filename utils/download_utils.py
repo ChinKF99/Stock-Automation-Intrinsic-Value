@@ -19,7 +19,7 @@ import sys
 from pathlib import Path
 import pandas as pd
 import requests
-from utils.api_utils import (
+from utils.csv_json_utils import (
     get_json,
     save_json,
     json_exists,
@@ -41,7 +41,7 @@ def download_endpoint(
     tickers,
     endpoint_url,
     output_folder,
-    endpoint_name,
+    endpoint_name, # e.g. "company_profile", "income_statement"
     fmp_batch_size,
     params_builder=None
 ):

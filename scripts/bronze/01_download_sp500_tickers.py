@@ -25,10 +25,9 @@ from config.config import (
     HTTP_TIMEOUT,
 )
 
-from utils.api_utils import(
+from utils.csv_json_utils import(
     save_csv
 )
-
 
 from config.logging_config import setup_logger
 

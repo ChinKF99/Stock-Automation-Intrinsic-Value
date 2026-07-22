@@ -48,6 +48,10 @@ from utils.sql_utils import (
     bulk_insert_dataframe
 )
 
+from utils.csv_json_utils import (
+    read_json_files
+)
+
 from config.logging_config import setup_logger
 
 logger = setup_logger(Path(__file__).stem)
@@ -59,52 +63,6 @@ logger = setup_logger(Path(__file__).stem)
 TARGET_SCHEMA = BRONZE_SCHEMA
 TARGET_TABLE = BRONZE_04_TABLE
 TARGET_SCHEMA_TABLE = BRONZE_04_SCHEMA_TABLE
-
-# ==========================================================
-# Read JSON file
-# ==========================================================
-
-def read_json_files() -> pd.DataFrame:
-   
-    # Read all company profile JSON files and return a single DataFrame.
-    
-    logger.info("Reading company profile JSON files...")
-
-    json_files = sorted(COMPANY_PROFILE_FOLDER.glob("*.json"))
-
-    if not json_files:
-        raise FileNotFoundError(
-            f"No JSON files found in:\n{COMPANY_PROFILE_FOLDER}"
-        )
-
-    logger.info(f"Found {len(json_files)} JSON files.")
-
-    rows = []
-
-    for file in json_files:
-
-        try:
-
-            with open(file, "r", encoding="utf-8") as f:
-                data = json.load(f)
-
-            if not data:
-                logger.warning(f"{file.name} is empty.")
-                continue
-
-            if isinstance(data, dict):
-                rows.append(data)
-
-        except Exception as ex:
-            logger.exception(
-                f"Failed reading {file.name}: {ex}"
-            )
-
-    df = pd.DataFrame(rows)
-
-    logger.info(f"{len(df)} company profiles loaded into data frame.")
-
-    return df
 
 # ==========================================================
 # Clean Data Frame (Keep whatever column needed only)
@@ -149,16 +107,6 @@ def clean_dataframe(df):
         "ceo",
         "ipo_date"
     ]
-
-    # # Convert IPO Date
-    # if "ipo_date" in df.columns:
-    #     df["ipo_date"] = pd.to_datetime(df["ipo_date"], errors="coerce").dt.date
-
-    # # Convert Active flag
-    # if "is_actively_trading" in df.columns:
-    #     df["is_actively_trading"] = (
-    #         df["is_actively_trading"].fillna(False).astype(bool)
-    #     )
 
     return df
 
@@ -208,7 +156,7 @@ def main():
         create_sql=TABLE_SQL
     )
 
-    df = read_json_files()
+    df = read_json_files("Company Profile", COMPANY_PROFILE_FOLDER)
     df = clean_dataframe(df)
 
     df.to_json('output_company_profile.json')

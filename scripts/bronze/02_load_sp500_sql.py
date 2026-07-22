@@ -39,7 +39,7 @@ from config.config import (
     get_sqlalchemy_engine,
     )
 
-from utils.api_utils import(
+from utils.csv_json_utils import(
     read_csv
     )
 

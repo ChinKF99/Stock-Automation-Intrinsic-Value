@@ -44,7 +44,8 @@ logger = setup_logger(Path(__file__).stem)
 
 def main():
 
-    engine = get_sqlalchemy_engine()
+    # Use this code if you have FMP Plan other than "BASIC"
+    # engine = get_sqlalchemy_engine()
 
     # Use this code if you have FMP Plan other than "BASIC"
     # tickers = get_sp500_tickers(BRONZE_02_SCHEMA_TABLE, engine)
