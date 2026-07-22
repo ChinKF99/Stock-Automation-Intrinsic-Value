@@ -139,7 +139,7 @@ def read_json_files(end_point_name, folder_name) -> pd.DataFrame:
    
     # Read all company profile JSON files and return a single DataFrame.
     
-    logger.info(f"Reading {end_point_name} JSON files...") # e.g. "company_profile", "income_statement"
+    logger.info(f"Reading {end_point_name} JSON files...") # e.g. "Company Profile", "Income Statement"
 
     json_files = sorted(folder_name.glob("*.json"))
 

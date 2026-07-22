@@ -36,13 +36,13 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from config.config import (
     get_sqlalchemy_engine,
-    INCOME_STATEMENT_FOLDER,
+    BALANCE_SHEET_FOLDER,
 )
  
 from utils.sql_utils import (
     BRONZE_SCHEMA,
-    BRONZE_06_TABLE,
-    BRONZE_06_SCHEMA_TABLE,
+    BRONZE_08_TABLE,
+    BRONZE_08_SCHEMA_TABLE,
     print_connection_info,
     ensure_table,
     truncate_table,
@@ -63,8 +63,8 @@ logger = setup_logger(Path(__file__).stem)
 # ============================================================
 
 TARGET_SCHEMA = BRONZE_SCHEMA
-TARGET_TABLE = BRONZE_06_TABLE
-TARGET_SCHEMA_TABLE = BRONZE_06_SCHEMA_TABLE
+TARGET_TABLE = BRONZE_08_TABLE
+TARGET_SCHEMA_TABLE = BRONZE_08_SCHEMA_TABLE
 
 # ==========================================================
 # Clean Data Frame (Keep whatever column needed only)

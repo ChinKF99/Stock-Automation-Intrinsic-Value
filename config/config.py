@@ -22,6 +22,7 @@ BRONZE_DATA_DIR = DATA_DIR / "bronze"
 LOG_DIR = BASE_DIR / "logs"
 COMPANY_PROFILE_FOLDER = RAW_DATA_DIR/ "company_profile"
 INCOME_STATEMENT_FOLDER = RAW_DATA_DIR/ "income_statement"
+BALANCE_SHEET_FOLDER = RAW_DATA_DIR / "balance_sheet"
 
 # Create folders automatically if missing
 DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -30,6 +31,7 @@ BRONZE_DATA_DIR.mkdir(parents=True, exist_ok=True)
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 COMPANY_PROFILE_FOLDER.mkdir(parents=True,exist_ok=True)
 INCOME_STATEMENT_FOLDER.mkdir(parents=True,exist_ok=True)
+BALANCE_SHEET_FOLDER.mkdir(parents=True, exist_ok=True)
 
 # ==========================================================
 # Raw SP500 tickers file path

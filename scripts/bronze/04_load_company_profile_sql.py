@@ -15,8 +15,6 @@ Target:
 
 from pathlib import Path
 import sys
-import json
-import pandas as pd
 
 # ==========================================================
 # Make project root importable

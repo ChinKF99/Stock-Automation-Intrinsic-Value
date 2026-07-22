@@ -41,7 +41,7 @@ def download_endpoint(
     tickers,
     endpoint_url,
     output_folder,
-    endpoint_name, # e.g. "company_profile", "income_statement"
+    endpoint_name, # e.g. "Company Profile", "Income Statement"
     fmp_batch_size,
     params_builder=None
 ):

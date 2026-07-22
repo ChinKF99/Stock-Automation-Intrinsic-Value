@@ -61,6 +61,8 @@ BRONZE_04_TABLE = "company_profile"
 BRONZE_04_SCHEMA_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_04_TABLE}"
 BRONZE_06_TABLE = 'income_statement'
 BRONZE_06_SCHEMA_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_06_TABLE}"
+BRONZE_08_TABLE = 'balance_sheet'
+BRONZE_08_SCHEMA_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_08_TABLE}"
 
 # ==========================================================
 # Ensure Schema & Table Exists
