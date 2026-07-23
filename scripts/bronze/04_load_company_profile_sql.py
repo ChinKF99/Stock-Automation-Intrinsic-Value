@@ -157,8 +157,6 @@ def main():
     df = read_json_files("Company Profile", COMPANY_PROFILE_FOLDER)
     df = clean_dataframe(df)
 
-    df.to_json('output_company_profile.json')
-
     truncate_table(engine, TARGET_SCHEMA, TARGET_TABLE)
 
     bulk_insert_dataframe(

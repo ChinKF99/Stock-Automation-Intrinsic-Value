@@ -1,20 +1,20 @@
 """
 ============================================================
-08_load_balacne_sheet_sql.py
+10_load_cash_flow_sql.py
 
 Purpose:
-    Load balance_sheet.json file into SQL Server.
+    Load cash_flow.json file into SQL Server.
 
 Source:
-    data/raw/balance_sheet/.json file
+    data/raw/cash_flow/.json file
 
 Target:
-    bronze.balance_sheet
+    bronze.cash_flow
 ============================================================
 """
 
 """
-Load Balance Sheet JSON files into SQL Server
+Load Cash Flow JSON files into SQL Server
 """
 
 from pathlib import Path
@@ -36,13 +36,13 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from config.config import (
     get_sqlalchemy_engine,
-    BALANCE_SHEET_FOLDER,
+    CASH_FLOW_FOLDER,
 )
  
 from utils.sql_utils import (
     BRONZE_SCHEMA,
-    BRONZE_08_TABLE,
-    BRONZE_08_SCHEMA_TABLE,
+    BRONZE_10_TABLE,
+    BRONZE_10_SCHEMA_TABLE,
     print_connection_info,
     ensure_table,
     truncate_table,
@@ -63,8 +63,8 @@ logger = setup_logger(Path(__file__).stem)
 # ============================================================
 
 TARGET_SCHEMA = BRONZE_SCHEMA
-TARGET_TABLE = BRONZE_08_TABLE
-TARGET_SCHEMA_TABLE = BRONZE_08_SCHEMA_TABLE
+TARGET_TABLE = BRONZE_10_TABLE
+TARGET_SCHEMA_TABLE = BRONZE_10_SCHEMA_TABLE
 
 # ==========================================================
 # Clean Data Frame (Keep whatever column needed only)
@@ -174,59 +174,43 @@ CREATE TABLE {TARGET_SCHEMA_TABLE}
     --========================================================
     -- Company / Statement Information
     --========================================================
-    symbol                              VARCHAR(20)     NOT NULL,
-    calendar_year                         SMALLINT,
-    period                              VARCHAR(10),
-    reported_currency                   VARCHAR(10),
-    
+    symbol                  VARCHAR(20)     NOT NULL,
+    fiscal_year             SMALLINT,
+    period                  VARCHAR(5),
+    currency                VARCHAR(10),
+
     --========================================================
     -- Data
     --========================================================
-    cash_and_cash_equivalents           BIGINT,
-    short_term_investments              BIGINT,
-    cash_and_short_term_investments     BIGINT,
-    net_receivables                     BIGINT,
-    accounts_receivables                BIGINT,
-    inventory                           BIGINT,
-    other_current_assets                BIGINT,
-    total_current_assets                BIGINT,
-    property_plant_equipment_net        BIGINT,
-    goodwill                            BIGINT,
-    intangible_assets                   BIGINT,
-    long_term_investments               BIGINT,
-    tax_assets                          BIGINT,
-    other_non_current_assets            BIGINT,
-    total_non_current_assets            BIGINT,
-    total_assets                        BIGINT,
-    accounts_payable                    BIGINT,
-    accrued_expenses                    BIGINT,
-    short_term_debt                     BIGINT,
-    deferred_revenue                    BIGINT,
-    other_current_liabilities           BIGINT,
-    total_current_liabilities           BIGINT,
-    long_term_debt                      BIGINT,
-    other_non_current_liabilities       BIGINT,
-    total_non_current_liabilities       BIGINT,
-    total_liabilities                   BIGINT,
-    common_stock                        BIGINT,
-    retained_earnings                   BIGINT,
-    accumulated_other_comprehensive_income_loss BIGINT,
-    total_stockholders_equity           BIGINT,
-    total_equity                        BIGINT,
-    total_debt                          BIGINT,
-    net_debt                            BIGINT,
+    net_income              BIGINT,
+    depreciation            BIGINT,
+    stock_based_compensation BIGINT,
+    change_in_working_capital BIGINT,
+    operating_cash_flow     BIGINT,
+    capital_expenditure     BIGINT,
+    free_cash_flow          BIGINT,
+    investing_cash_flow     BIGINT,
+    financing_cash_flow     BIGINT,
+    net_debt_issuance       BIGINT,
+    share_buyback           BIGINT,
+    dividends_paid          BIGINT,
+    cash_beginning          BIGINT,
+    cash_ending             BIGINT,
+    net_change_cash         BIGINT,
+    tax_paid                BIGINT,
+    interest_paid           BIGINT,
 
     --========================================================
     -- ETL Metadata
     --========================================================
-    load_date                           DATE
+    load_date DATE
         DEFAULT CAST(GETDATE() AS DATE),
 
-    load_ts                             DATETIME2
+    load_ts DATETIME2
         DEFAULT SYSDATETIME(),
 
-    CONSTRAINT PK_balance_sheet
-        PRIMARY KEY(symbol, calendar_year)
+    CONSTRAINT PK_cash_flow
+        PRIMARY KEY(symbol,fiscal_year)
 );"""
 
 # ==========================================================
@@ -235,7 +219,7 @@ CREATE TABLE {TARGET_SCHEMA_TABLE}
 
 def main():
     logger.info("=" * 60)
-    logger.info("STEP 08 - LOAD BALANCE SHEET INTO SQL")
+    logger.info("STEP 10 - LOAD CASH FLOW INTO SQL")
     logger.info("=" * 60)
 
     engine = get_sqlalchemy_engine()
@@ -249,7 +233,7 @@ def main():
         create_sql=TABLE_SQL
     )
 
-    df = read_json_files("Balance Sheet", BALANCE_SHEET_FOLDER)
+    df = read_json_files("Cash Flow", CASH_FLOW_FOLDER)
     df = clean_dataframe(df)
 
     truncate_table(engine, TARGET_SCHEMA, TARGET_TABLE)

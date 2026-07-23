@@ -165,8 +165,6 @@ def main():
     df = read_json_files("Income Statement", INCOME_STATEMENT_FOLDER)
     df = clean_dataframe(df)
 
-    df.to_json('output_income_statement.json')
-
     truncate_table(engine, TARGET_SCHEMA, TARGET_TABLE)
 
     bulk_insert_dataframe(
