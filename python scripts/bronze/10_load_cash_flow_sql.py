@@ -74,8 +74,6 @@ def clean_dataframe(df):
         # General Info
         "symbol",
         "fiscalYear",
-        "period",
-        "reportedCurrency",
 
         # Data
         "netIncome",
@@ -90,9 +88,6 @@ def clean_dataframe(df):
         "netDebtIssuance",
         "commonStockRepurchased",
         "commonDividendsPaid",
-        "cashAtBeginningOfPeriod",
-        "cashAtEndOfPeriod",
-        "netChangeInCash",
         "incomeTaxesPaid",
         "interestPaid"
     ]
@@ -103,8 +98,6 @@ def clean_dataframe(df):
         # General Info
         "symbol",
         "calendar_year",
-        "period",
-        "reported_currency",
     
         # Data
         "net_income",
@@ -119,9 +112,6 @@ def clean_dataframe(df):
         "net_debt_issuance",
         "share_buyback",
         "dividends_paid",
-        "cash_beginning",
-        "cash_ending",
-        "net_change_cash",
         "tax_paid",
         "interest_paid"
     ]
@@ -140,8 +130,6 @@ CREATE TABLE {TARGET_SCHEMA_TABLE}
     --========================================================
     symbol                  VARCHAR(20)     NOT NULL,
     calendar_year           SMALLINT,
-    period                  VARCHAR(5),
-    reported_currency       VARCHAR(10),
 
     --========================================================
     -- Data
@@ -158,9 +146,6 @@ CREATE TABLE {TARGET_SCHEMA_TABLE}
     net_debt_issuance       BIGINT,
     share_buyback           BIGINT,
     dividends_paid          BIGINT,
-    cash_beginning          BIGINT,
-    cash_ending             BIGINT,
-    net_change_cash         BIGINT,
     tax_paid                BIGINT,
     interest_paid           BIGINT,
 

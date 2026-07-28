@@ -74,8 +74,6 @@ def clean_dataframe(df):
         # General Info
         "symbol",
         "fiscalYear",
-        "period",
-        "reportedCurrency",
 
         # Data
         "revenue",
@@ -94,8 +92,6 @@ def clean_dataframe(df):
         # General Info
         "symbol",
         "calendar_year",
-        "period",
-        "reported_currency",
 
         # Data
         "revenue",
@@ -122,8 +118,6 @@ CREATE TABLE {TARGET_SCHEMA_TABLE}
     --========================================================
     symbol VARCHAR(20),
     calendar_year INT,
-    period VARCHAR(10),
-    reported_currency VARCHAR(10),
 
     --========================================================
     -- Data
@@ -136,10 +130,16 @@ CREATE TABLE {TARGET_SCHEMA_TABLE}
     weighted_average_shs_out BIGINT,
     cik VARCHAR(20),
     filing_date DATE,
+
+    --========================================================
+    -- ETL Metadata
+    --========================================================
     load_date DATE
         DEFAULT CAST(GETDATE() AS DATE),
+
     load_ts DATETIME2
         DEFAULT SYSDATETIME(),
+
     CONSTRAINT PK_income_statement
         PRIMARY KEY(symbol, calendar_year)
 );

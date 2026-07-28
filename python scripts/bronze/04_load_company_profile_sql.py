@@ -117,6 +117,9 @@ def clean_dataframe(df):
 TABLE_SQL = f"""
 CREATE TABLE {TARGET_SCHEMA_TABLE}
 (
+    --========================================================
+    -- General Info & Data
+    --========================================================
     symbol              VARCHAR(20)     NOT NULL PRIMARY KEY,
     company_name        VARCHAR(255),
     exchange            VARCHAR(50),
@@ -131,8 +134,15 @@ CREATE TABLE {TARGET_SCHEMA_TABLE}
     last_dividend       FLOAT,
     ceo                 VARCHAR(100),
     ipo_date            DATE,
-    load_date           DATE DEFAULT CAST(GETDATE() AS DATE),
-    load_ts             DATETIME2 DEFAULT SYSDATETIME()
+
+    --========================================================
+    -- ETL Metadata
+    --========================================================   
+    load_date DATE
+        DEFAULT CAST(GETDATE() AS DATE),
+
+    load_ts DATETIME2
+        DEFAULT SYSDATETIME()
 );
 """
 
