@@ -2,3 +2,8 @@
 *.json
 *.log
 *.pyc
+logs/01_download_sp500_tickers.log
+logs/02_load_sp500_sql.log
+logs/03_download_company_profile.log
+logs/04_load_company_profile_sql.log
+logs/05_download_income_statement.log
