@@ -13,10 +13,6 @@ Target:
 ============================================================
 """
 
-"""
-Load Income Statement JSON files into SQL Server
-"""
-
 from pathlib import Path
 import sys
 
@@ -75,19 +71,19 @@ def clean_dataframe(df):
     logger.info("Cleaning Data Frame...")
 
     keep_columns = [
+        # General Info
         "symbol",
         "fiscalYear",
         "period",
         "reportedCurrency",
 
+        # Data
         "revenue",
         "grossProfit",
         "operatingIncome",
         "netIncome",
-
         "eps",
         "weightedAverageShsOut",
-
         "cik",
         "filingDate",
     ]
@@ -95,19 +91,19 @@ def clean_dataframe(df):
     df = df[keep_columns].copy()
 
     df.columns = [
+        # General Info
         "symbol",
         "calendar_year",
         "period",
         "reported_currency",
 
+        # Data
         "revenue",
         "gross_profit",
         "operating_income",
         "net_income",
-
         "eps",
         "weighted_average_shs_out",
-
         "cik",
         "filing_date",
     ]
@@ -121,10 +117,17 @@ def clean_dataframe(df):
 TABLE_SQL = f"""
 CREATE TABLE {TARGET_SCHEMA_TABLE}
 (
+    --========================================================
+    -- General Info
+    --========================================================
     symbol VARCHAR(20),
     calendar_year INT,
     period VARCHAR(10),
     reported_currency VARCHAR(10),
+
+    --========================================================
+    -- Data
+    --========================================================
     revenue BIGINT,
     gross_profit BIGINT,
     operating_income BIGINT,

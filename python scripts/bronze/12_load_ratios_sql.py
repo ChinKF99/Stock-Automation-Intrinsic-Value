@@ -1,15 +1,15 @@
 """
 ============================================================
-04_load_company_profile_sql.py
+12_load_ratios_sql.py
 
 Purpose:
-    Load company_profile.csv into SQL Server.
+    Load ratios.json file into SQL Server.
 
 Source:
-    data/raw/company_profile/.json file
+    data/raw/ratios/.json file
 
 Target:
-    bronze.company_profile
+    bronze.ratios
 ============================================================
 """
 
@@ -32,13 +32,13 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from config.config import (
     get_sqlalchemy_engine,
-    COMPANY_PROFILE_FOLDER,
+    RATIOS_FOLDER,
 )
-
+ 
 from utils.sql_utils import (
     BRONZE_SCHEMA,
-    BRONZE_04_TABLE,
-    BRONZE_04_SCHEMA_TABLE,
+    BRONZE_12_TABLE,
+    BRONZE_12_SCHEMA_TABLE,
     print_connection_info,
     ensure_table,
     truncate_table,
@@ -46,7 +46,7 @@ from utils.sql_utils import (
     bulk_insert_dataframe
 )
 
-from utils.csv_json_utils import (
+from utils.csv_json_utils import(
     read_json_files
 )
 
@@ -59,8 +59,8 @@ logger = setup_logger(Path(__file__).stem)
 # ============================================================
 
 TARGET_SCHEMA = BRONZE_SCHEMA
-TARGET_TABLE = BRONZE_04_TABLE
-TARGET_SCHEMA_TABLE = BRONZE_04_SCHEMA_TABLE
+TARGET_TABLE = BRONZE_12_TABLE
+TARGET_SCHEMA_TABLE = BRONZE_12_SCHEMA_TABLE
 
 # ==========================================================
 # Clean Data Frame (Keep whatever column needed only)
@@ -68,44 +68,52 @@ TARGET_SCHEMA_TABLE = BRONZE_04_SCHEMA_TABLE
 
 def clean_dataframe(df):
 
-    logger.info("Cleaning dataframe...")
+    logger.info("Cleaning Data Frame...")
 
     keep_columns = [
+        # General Info
         "symbol",
-        "companyName",
-        "exchange",
-        "sector",
-        "industry",
-        "country",
-        "currency",
-        "marketCap",
-        "isActivelyTrading",
-        "price",
-        "beta",
-        "lastDividend",
-        "ceo",
-        "ipoDate"
+
+        # Data
+        "grossProfitMarginTTM",
+        "operatingProfitMarginTTM",
+        "netProfitMarginTTM",
+        "currentRatioTTM",
+        "debtToEquityRatioTTM",
+        "financialLeverageRatioTTM",
+        "priceToEarningsRatioTTM",
+        "priceToBookRatioTTM",
+        "priceToSalesRatioTTM",
+        "priceToFreeCashFlowRatioTTM",
+        "enterpriseValueTTM",
+        "enterpriseValueMultipleTTM",
+        "dividendYieldTTM",
+        "dividendPayoutRatioTTM"
     ]
 
     df = df[keep_columns].copy()
-    
-    df.columns = [
-        "symbol",
-        "company_name",
-        "exchange",
-        "sector",
-        "industry",
-        "country",
-        "currency",
-        "market_cap",
-        "is_actively_trading",
-        "price",
-        "beta",
-        "last_dividend",
-        "ceo",
-        "ipo_date"
-    ]
 
+    df.columns = [
+        # General Info
+        "symbol",
+
+        # Data
+        "gross_margin",
+        "operating_margin",
+        "net_margin",
+        "current_ratio",
+        "debt_to_equity",
+        "financial_leverage",
+        "pe_ratio",
+        "pb_ratio",
+        "ps_ratio",
+        "pfcf_ratio",
+        "enterprise_value",
+        "ev_ebitda",
+        "dividend_yield",
+        "dividend_payout"
+        ]
+        
     return df
 
 # ==========================================================
@@ -115,24 +123,38 @@ def clean_dataframe(df):
 TABLE_SQL = f"""
 CREATE TABLE {TARGET_SCHEMA_TABLE}
 (
-    symbol              VARCHAR(20)     NOT NULL PRIMARY KEY,
-    company_name        VARCHAR(255),
-    exchange            VARCHAR(50),
-    sector              VARCHAR(100),
-    industry            VARCHAR(150),
-    country             VARCHAR(100),
-    currency            VARCHAR(20),
-    market_cap          BIGINT,
-    is_actively_trading BIT,
-    price               INT,
-    beta                FLOAT,
-    last_dividend       FLOAT,
-    ceo                 VARCHAR(100),
-    ipo_date            DATE,
-    load_date           DATE DEFAULT CAST(GETDATE() AS DATE),
-    load_ts             DATETIME2 DEFAULT SYSDATETIME()
-);
-"""
+    --========================================================
+    -- General Info
+    --========================================================
+    symbol                  VARCHAR(20)     NOT NULL,
+
+    --========================================================
+    -- Data
+    --========================================================
+    gross_margin                FLOAT,
+    operating_margin            FLOAT,
+    net_margin                  FLOAT,
+    current_ratio               FLOAT,
+    debt_to_equity              FLOAT,
+    financial_leverage          FLOAT,
+    pe_ratio                    FLOAT,
+    pb_ratio                    FLOAT,
+    ps_ratio                    FLOAT,
+    pfcf_ratio                  FLOAT,
+    enterprise_value            BIGINT,
+    ev_ebitda                   FLOAT,
+    dividend_yield              FLOAT,
+    dividend_payout             FLOAT,
+
+    --========================================================
+    -- ETL Metadata
+    --========================================================
+    load_date DATE
+        DEFAULT CAST(GETDATE() AS DATE),
+
+    load_ts DATETIME2
+        DEFAULT SYSDATETIME()
+);"""
 
 # ==========================================================
 # Main
@@ -140,7 +162,7 @@ CREATE TABLE {TARGET_SCHEMA_TABLE}
 
 def main():
     logger.info("=" * 60)
-    logger.info("STEP 04 - LOAD COMPANY PROFILE INTO SQL")
+    logger.info("STEP 10 - LOAD CASH FLOW INTO SQL")
     logger.info("=" * 60)
 
     engine = get_sqlalchemy_engine()
@@ -154,7 +176,7 @@ def main():
         create_sql=TABLE_SQL
     )
 
-    df = read_json_files("Company Profile", COMPANY_PROFILE_FOLDER)
+    df = read_json_files("Cash Flow", RATIOS_FOLDER)
     df = clean_dataframe(df)
 
     truncate_table(engine, TARGET_SCHEMA, TARGET_TABLE)
