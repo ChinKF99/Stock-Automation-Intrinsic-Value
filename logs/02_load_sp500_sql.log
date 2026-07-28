@@ -1,15 +1,15 @@
-2026-07-21 22:01:26 | INFO     | ============================================================
-2026-07-21 22:01:26 | INFO     | BRONZE STEP 02 - LOAD CSV INTO SQL
-2026-07-21 22:01:26 | INFO     | ============================================================
-2026-07-21 22:01:26 | INFO     | Connected SQL Server
-2026-07-21 22:01:26 | INFO     | Server   : DESKTOP-I5Q65P1\SQLEXPRESS
-2026-07-21 22:01:26 | INFO     | Database : StockAutomation
-2026-07-21 22:01:26 | INFO     | Login    : DESKTOP-I5Q65P1\Khai Foong
-2026-07-21 22:01:26 | INFO     | Verified table bronze.sp500_tickers
-2026-07-21 22:01:26 | INFO     | Table truncated bronze.sp500_tickers
-2026-07-21 22:01:26 | INFO     | Reading CSV...
-2026-07-21 22:01:26 | INFO     | 503 rows loaded from CSV.
-2026-07-21 22:01:26 | INFO     | Total 503 rows inserted
-2026-07-21 22:01:26 | INFO     | ============================================================
-2026-07-21 22:01:26 | INFO     | Finished
-2026-07-21 22:01:26 | INFO     | ============================================================
+2026-07-28 08:17:43 | INFO     | ============================================================
+2026-07-28 08:17:43 | INFO     | BRONZE STEP 02 - LOAD CSV INTO SQL
+2026-07-28 08:17:43 | INFO     | ============================================================
+2026-07-28 08:17:43 | INFO     | Connected SQL Server
+2026-07-28 08:17:43 | INFO     | Server   : DESKTOP-I5Q65P1\SQLEXPRESS
+2026-07-28 08:17:43 | INFO     | Database : StockAutomation
+2026-07-28 08:17:43 | INFO     | Login    : DESKTOP-I5Q65P1\Khai Foong
+2026-07-28 08:17:43 | INFO     | Verified table bronze.sp500_tickers
+2026-07-28 08:17:43 | INFO     | Table truncated bronze.sp500_tickers
+2026-07-28 08:17:43 | INFO     | Reading CSV...
+2026-07-28 08:17:43 | INFO     | 503 rows loaded from CSV.
+2026-07-28 08:17:43 | INFO     | Total 503 rows inserted
+2026-07-28 08:17:43 | INFO     | ============================================================
+2026-07-28 08:17:43 | INFO     | Finished
+2026-07-28 08:17:43 | INFO     | ============================================================

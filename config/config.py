@@ -17,18 +17,16 @@ from sqlalchemy import create_engine
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATA_DIR = BASE_DIR / "data"
-RAW_DATA_DIR = DATA_DIR / "raw"
 BRONZE_DATA_DIR = DATA_DIR / "bronze"
 LOG_DIR = BASE_DIR / "logs"
-COMPANY_PROFILE_FOLDER = RAW_DATA_DIR/ "company_profile"
-INCOME_STATEMENT_FOLDER = RAW_DATA_DIR/ "income_statement"
-BALANCE_SHEET_FOLDER = RAW_DATA_DIR / "balance_sheet"
-CASH_FLOW_FOLDER = RAW_DATA_DIR / "cash_flow"
-RATIOS_FOLDER = RAW_DATA_DIR / "ratios"
+COMPANY_PROFILE_FOLDER = BRONZE_DATA_DIR/ "company_profile"
+INCOME_STATEMENT_FOLDER = BRONZE_DATA_DIR/ "income_statement"
+BALANCE_SHEET_FOLDER = BRONZE_DATA_DIR/ "balance_sheet"
+CASH_FLOW_FOLDER = BRONZE_DATA_DIR/ "cash_flow"
+RATIOS_FOLDER = BRONZE_DATA_DIR/ "ratios"
 
 # Create folders automatically if missing
 DATA_DIR.mkdir(parents=True, exist_ok=True)
-RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
 BRONZE_DATA_DIR.mkdir(parents=True, exist_ok=True)
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 COMPANY_PROFILE_FOLDER.mkdir(parents=True,exist_ok=True)
@@ -41,7 +39,7 @@ RATIOS_FOLDER.mkdir(parents=True, exist_ok=True)
 # Raw SP500 tickers file path
 # ==========================================================
 
-SP500_TICKERS_CSV_FILE_PATH = RAW_DATA_DIR / "sp500_tickers.csv"
+SP500_TICKERS_CSV_FILE_PATH = BRONZE_DATA_DIR / "sp500_tickers.csv"
 
 # ==========================================================
 # Load .env
