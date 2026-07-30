@@ -55,6 +55,7 @@ def print_connection_info(engine: Engine) -> None:
 
 #Bronze table for bronze.sp500_tickers
 BRONZE_SCHEMA = "bronze"
+SILVER_SCHEMA = "silver"
 BRONZE_02_TABLE = "sp500_tickers"
 BRONZE_02_SCHEMA_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_02_TABLE}"
 BRONZE_04_TABLE = "company_profile"
@@ -67,6 +68,8 @@ BRONZE_10_TABLE = 'cash_flow'
 BRONZE_10_SCHEMA_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_10_TABLE}"
 BRONZE_12_TABLE = 'ratios'
 BRONZE_12_SCHEMA_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_12_TABLE}"
+SILVER_01_TABLE = 'company_financials'
+SILVER_01_SCHEMA_TABLE = f"{SILVER_SCHEMA}.{SILVER_01_TABLE}"
 
 # ==========================================================
 # Ensure Schema & Table Exists
@@ -208,3 +211,14 @@ def bulk_insert_dataframe(
     )
 
     logger.info("Insert completed.")
+
+# ==========================================================
+# Load SQL Table
+# ==========================================================
+
+def load_table(schema_table, engine):
+    query = f"""
+    SELECT *
+    FROM {schema_table}
+    """
+    return pd.read_sql(query, engine)
