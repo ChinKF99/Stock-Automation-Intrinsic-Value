@@ -78,33 +78,33 @@ from config.logging_config import setup_logger
 logger = setup_logger(Path(__file__).stem)
 
 
-# def load_to_silver_01(target_schema, target_table, target_schema_table,engine,df):
-#     with engine.begin() as conn:
-#         conn.execute(text(f"""
-#         IF NOT EXISTS (
-#             SELECT *
-#             FROM sys.schemas
-#             WHERE name='{target_schema}'
-#         )
-#         EXEC('CREATE SCHEMA {target_schema}')
-#         """))
+def load_to_silver_01(target_schema, target_table, target_schema_table,engine,df):
+    with engine.begin() as conn:
+        conn.execute(text(f"""
+        IF NOT EXISTS (
+            SELECT *
+            FROM sys.schemas
+            WHERE name='{target_schema}'
+        )
+        EXEC('CREATE SCHEMA {target_schema}')
+        """))
 
-#         conn.execute(text(f"""
-#         IF OBJECT_ID('{target_schema_table}','U') IS NOT NULL
-#             DROP TABLE {target_schema_table}
-#         """))
+        conn.execute(text(f"""
+        IF OBJECT_ID('{target_schema_table}','U') IS NOT NULL
+            DROP TABLE {target_schema_table}
+        """))
 
-#     df.to_sql(
-#         target_table,
-#         engine,
-#         schema= target_schema,
-#         if_exists="replace",
-#         index=False,
-#         chunksize=1000,
-#         method="multi"
-#     )
+    df.to_sql(
+        target_table,
+        engine,
+        schema= target_schema,
+        if_exists="replace",
+        index=False,
+        chunksize=1000,
+        method="multi"
+    )
 
-#     logger.info("Silver table created successfully.")
+    logger.info("Silver table created successfully.")
 
 
 def main():
@@ -114,7 +114,6 @@ def main():
     logger.info("=" * 60)
 
     engine = get_sqlalchemy_engine()
-
     print_connection_info(engine)
 
     ensure_schema(
@@ -129,7 +128,7 @@ def main():
 
     logger.info("Merging Profile...")
 
-    profile = select_columns(profile, PROFILE_COLUMNS, "company_profil")
+    profile = select_columns(profile, PROFILE_COLUMNS, "company_profile")
     income = select_columns(income, INCOME_COLUMNS, "income_statement")
     balance = select_columns(balance, BALANCE_COLUMNS, "balance_sheet")
     cashflow = select_columns(cashflow, CASHFLOW_COLUMNS, "cash_flow")
@@ -141,11 +140,11 @@ def main():
         how="left"
     )
 
-    # df = df.merge(
-    #     cashflow,
-    #     on=["symbol", "calendar_year"],
-    #     how="left"
-    # )
+    df = df.merge(
+        cashflow,
+        on=["symbol", "calendar_year"],
+        how="left"
+    )
 
     df = df.merge(
         profile,
@@ -160,7 +159,6 @@ def main():
     )
 
     logger.info(f"Rows: {len(df)}")
-
 
     bulk_insert_dataframe(engine,schema=TARGET_SCHEMA, table=TARGET_TABLE, dataframe=df)
 

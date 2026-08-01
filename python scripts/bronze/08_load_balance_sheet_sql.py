@@ -136,7 +136,7 @@ CREATE TABLE {TARGET_SCHEMA_TABLE}
     -- General Info
     --========================================================
     symbol                              VARCHAR(20)     NOT NULL,
-    calendar_year                         SMALLINT,
+    calendar_year                       INT,
 
     --========================================================
     -- Data
