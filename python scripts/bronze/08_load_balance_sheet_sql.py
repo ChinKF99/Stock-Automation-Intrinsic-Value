@@ -40,6 +40,7 @@ from utils.sql_utils import (
     BRONZE_08_TABLE,
     BRONZE_08_SCHEMA_TABLE,
     print_connection_info,
+    ensure_schema,
     ensure_table,
     truncate_table,
     get_row_count,
@@ -184,12 +185,15 @@ def main():
 
     print_connection_info(engine)
 
+    ensure_schema(
+        engine=engine,
+        schema=TARGET_SCHEMA,)
+    
     ensure_table(
         engine=engine,
         schema=TARGET_SCHEMA,
         table=TARGET_TABLE,
-        create_sql=TABLE_SQL
-    )
+        create_sql=TABLE_SQL)
 
     df = read_json_files("Balance Sheet", BALANCE_SHEET_FOLDER)
     df = clean_dataframe(df)

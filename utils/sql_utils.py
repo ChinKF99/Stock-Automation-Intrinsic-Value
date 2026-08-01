@@ -54,8 +54,12 @@ def print_connection_info(engine: Engine) -> None:
 # ==========================================================
 
 #Bronze table for bronze.sp500_tickers
+
+# Schemas
 BRONZE_SCHEMA = "bronze"
 SILVER_SCHEMA = "silver"
+
+# Bronze Tables
 BRONZE_02_TABLE = "sp500_tickers"
 BRONZE_02_SCHEMA_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_02_TABLE}"
 BRONZE_04_TABLE = "company_profile"
@@ -66,25 +70,21 @@ BRONZE_08_TABLE = 'balance_sheet'
 BRONZE_08_SCHEMA_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_08_TABLE}"
 BRONZE_10_TABLE = 'cash_flow'
 BRONZE_10_SCHEMA_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_10_TABLE}"
-BRONZE_12_TABLE = 'ratios'
+BRONZE_12_TABLE = 'ratios_ttm'
 BRONZE_12_SCHEMA_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_12_TABLE}"
+
+# Silver Tables
 SILVER_01_TABLE = 'company_financials'
 SILVER_01_SCHEMA_TABLE = f"{SILVER_SCHEMA}.{SILVER_01_TABLE}"
 
 # ==========================================================
-# Ensure Schema & Table Exists
+# Ensure Schema
 # ==========================================================
-def ensure_table(
+def ensure_schema(
     engine,
     schema: str,
-    table: str,
-    create_sql: str
 ) -> None:
     """
-    Ensure a schema and table exist.
-
-    Parameters
-    ----------
     engine : SQLAlchemy Engine
 
     schema : str
@@ -92,43 +92,69 @@ def ensure_table(
         Example:
             bronze
 
-    table_name : str
+    table : str
         Table name only.
         Example:
             sp500_tickers
-
-    create_sql : str
-        CREATE TABLE statement only.
-
-        Example:
-
-        CREATE TABLE bronze.sp500_tickers
-        (
-            ...
-        );
     """
 
     sql = f"""
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM sys.schemas
-        WHERE name = '{schema}'
-    )
-    BEGIN
-        EXEC('CREATE SCHEMA {schema}');
-    END;
-
-    IF OBJECT_ID('{schema}.{table}','U') IS NULL
-    BEGIN
-        {create_sql}
-    END;
-    """
+        IF NOT EXISTS
+        (
+            SELECT 1
+            FROM sys.schemas
+            WHERE name = '{schema}'
+        )
+        BEGIN
+            EXEC('CREATE SCHEMA {schema}');
+        END;
+        """
 
     with engine.begin() as conn:
         conn.execute(text(sql))
 
-    logger.info("Verified table %s.%s", schema, table)
+    logger.info("Verified Schema %s", schema)
+
+# ==========================================================
+# Create Table from scratch (Not for merging Silver Layer)
+# ==========================================================
+
+def ensure_table(engine, schema, table, create_sql):
+    """    
+
+    engine : SQLAlchemy Engine
+
+    schema : str
+        Schema name.
+        Example:
+            bronze
+
+    table : str
+    Table name only.
+    Example:
+        sp500_tickers
+
+    create_sql : str
+    CREATE TABLE statement only.
+
+    Example:
+
+    CREATE TABLE bronze.sp500_tickers
+    (
+        ...
+    );"""
+
+    sql = f"""
+        IF OBJECT_ID('{schema}.{table}','U') IS NULL
+        BEGIN
+            {create_sql}
+        END;
+        """
+    
+    with engine.begin() as conn:
+        conn.execute(text(sql))
+
+    logger.info("Verified Schema Table %s.%s", schema, table)
 
 # ==========================================================
 # Get Row Count
@@ -287,7 +313,7 @@ CASHFLOW_COLUMNS = [
     "free_cash_flow",
 ]
 
-RATIO_COLUMNS = [
+RATIO_TTM_COLUMNS = [
     "symbol",
     "gross_margin",
     "operating_margin",

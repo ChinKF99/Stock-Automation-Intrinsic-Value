@@ -48,6 +48,7 @@ from utils.sql_utils import (
     BRONZE_02_TABLE,
     BRONZE_02_SCHEMA_TABLE,
     print_connection_info,
+    ensure_schema,
     ensure_table,
     truncate_table,
     get_row_count
@@ -70,7 +71,7 @@ TARGET_SCHEMA_TABLE = BRONZE_02_SCHEMA_TABLE
 # SQL Statements for ensure_table()
 # ==========================================================
 
-CREATE_SQL = f"""
+TABLE_SQL = f"""
 CREATE TABLE {TARGET_SCHEMA_TABLE}
 (
     ticker VARCHAR(20) PRIMARY KEY,
@@ -123,11 +124,15 @@ def main():
         engine = get_sqlalchemy_engine()
         print_connection_info(engine)
 
+        ensure_schema(
+            engine=engine,
+            schema=TARGET_SCHEMA,)
+
         ensure_table(
-        engine=engine,
-        schema=TARGET_SCHEMA,
-        table=TARGET_TABLE,
-        create_sql=CREATE_SQL)
+            engine=engine,
+            schema=TARGET_SCHEMA,
+            table=TARGET_TABLE,
+            create_sql=TABLE_SQL)
 
         truncate_table(engine, TARGET_SCHEMA, TARGET_TABLE)
 

@@ -40,6 +40,7 @@ from utils.sql_utils import (
     BRONZE_04_TABLE,
     BRONZE_04_SCHEMA_TABLE,
     print_connection_info,
+    ensure_schema,
     ensure_table,
     truncate_table,
     get_row_count,
@@ -159,12 +160,15 @@ def main():
 
     print_connection_info(engine)
 
+    ensure_schema(
+        engine=engine,
+        schema=TARGET_SCHEMA,)
+
     ensure_table(
         engine=engine,
         schema=TARGET_SCHEMA,
         table=TARGET_TABLE,
-        create_sql=TABLE_SQL
-    )
+        create_sql=TABLE_SQL)
 
     df = read_json_files("Company Profile", COMPANY_PROFILE_FOLDER)
     df = clean_dataframe(df)

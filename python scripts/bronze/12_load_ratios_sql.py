@@ -32,7 +32,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from config.config import (
     get_sqlalchemy_engine,
-    RATIOS_FOLDER,
+    RATIOS_TTM_FOLDER,
 )
  
 from utils.sql_utils import (
@@ -40,6 +40,7 @@ from utils.sql_utils import (
     BRONZE_12_TABLE,
     BRONZE_12_SCHEMA_TABLE,
     print_connection_info,
+    ensure_schema,
     ensure_table,
     truncate_table,
     get_row_count,
@@ -169,14 +170,17 @@ def main():
 
     print_connection_info(engine)
 
+    ensure_schema(
+        engine=engine,
+        schema=TARGET_SCHEMA,)
+    
     ensure_table(
         engine=engine,
         schema=TARGET_SCHEMA,
         table=TARGET_TABLE,
-        create_sql=TABLE_SQL
-    )
+        create_sql=TABLE_SQL)
 
-    df = read_json_files("Cash Flow", RATIOS_FOLDER)
+    df = read_json_files("Cash Flow", RATIOS_TTM_FOLDER)
     df = clean_dataframe(df)
 
     truncate_table(engine, TARGET_SCHEMA, TARGET_TABLE)

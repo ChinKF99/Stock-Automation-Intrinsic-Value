@@ -26,7 +26,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from config.config import (
     get_sqlalchemy_engine,
     FMP_RATIOS_URL,
-    RATIOS_FOLDER,
+    RATIOS_TTM_FOLDER,
     FMP_BATCH_SIZE,
 )
 
@@ -57,7 +57,7 @@ def main():
     download_endpoint(
         tickers,
         FMP_RATIOS_URL,
-        RATIOS_FOLDER,
+        RATIOS_TTM_FOLDER,
         "Ratios", # e.g. "company_profile", "income_statement"
         FMP_BATCH_SIZE
     )

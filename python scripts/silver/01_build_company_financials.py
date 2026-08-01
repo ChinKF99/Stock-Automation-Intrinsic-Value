@@ -46,6 +46,7 @@ from utils.sql_utils import (
     BRONZE_10_SCHEMA_TABLE,
     BRONZE_12_SCHEMA_TABLE,
     print_connection_info,
+    ensure_schema,
     ensure_table,
     truncate_table,
     get_row_count,
@@ -56,7 +57,7 @@ from utils.sql_utils import (
     INCOME_COLUMNS,
     BALANCE_COLUMNS,
     CASHFLOW_COLUMNS,
-    RATIO_COLUMNS
+    RATIO_TTM_COLUMNS
 )
 
 # ============================================================
@@ -77,33 +78,33 @@ from config.logging_config import setup_logger
 logger = setup_logger(Path(__file__).stem)
 
 
-def load_to_silver_01(target_schema, target_table, target_schema_table,engine,df):
-    with engine.begin() as conn:
-        conn.execute(text(f"""
-        IF NOT EXISTS (
-            SELECT *
-            FROM sys.schemas
-            WHERE name='{target_schema}'
-        )
-        EXEC('CREATE SCHEMA {target_schema}')
-        """))
+# def load_to_silver_01(target_schema, target_table, target_schema_table,engine,df):
+#     with engine.begin() as conn:
+#         conn.execute(text(f"""
+#         IF NOT EXISTS (
+#             SELECT *
+#             FROM sys.schemas
+#             WHERE name='{target_schema}'
+#         )
+#         EXEC('CREATE SCHEMA {target_schema}')
+#         """))
 
-        conn.execute(text(f"""
-        IF OBJECT_ID('{target_schema_table}','U') IS NOT NULL
-            DROP TABLE {target_schema_table}
-        """))
+#         conn.execute(text(f"""
+#         IF OBJECT_ID('{target_schema_table}','U') IS NOT NULL
+#             DROP TABLE {target_schema_table}
+#         """))
 
-    df.to_sql(
-        target_table,
-        engine,
-        schema= target_schema,
-        if_exists="replace",
-        index=False,
-        chunksize=1000,
-        method="multi"
-    )
+#     df.to_sql(
+#         target_table,
+#         engine,
+#         schema= target_schema,
+#         if_exists="replace",
+#         index=False,
+#         chunksize=1000,
+#         method="multi"
+#     )
 
-    logger.info("Silver table created successfully.")
+#     logger.info("Silver table created successfully.")
 
 
 def main():
@@ -113,7 +114,12 @@ def main():
     logger.info("=" * 60)
 
     engine = get_sqlalchemy_engine()
-    print_connection_info
+
+    print_connection_info(engine)
+
+    ensure_schema(
+    engine=engine,
+    schema=TARGET_SCHEMA,)
 
     profile = load_table(company_profile,engine)
     income = load_table(income_statement,engine)
@@ -127,7 +133,7 @@ def main():
     income = select_columns(income, INCOME_COLUMNS, "income_statement")
     balance = select_columns(balance, BALANCE_COLUMNS, "balance_sheet")
     cashflow = select_columns(cashflow, CASHFLOW_COLUMNS, "cash_flow")
-    ratiosttm = select_columns(ratiosttm, RATIO_COLUMNS, "financial_ratios")
+    ratiosttm = select_columns(ratiosttm, RATIO_TTM_COLUMNS, "financial_ratios")
 
     df = income.merge(
         balance,
@@ -135,11 +141,11 @@ def main():
         how="left"
     )
 
-    df = df.merge(
-        cashflow,
-        on=["symbol", "calendar_year"],
-        how="left"
-    )
+    # df = df.merge(
+    #     cashflow,
+    #     on=["symbol", "calendar_year"],
+    #     how="left"
+    # )
 
     df = df.merge(
         profile,
@@ -155,7 +161,10 @@ def main():
 
     logger.info(f"Rows: {len(df)}")
 
-    load_to_silver_01(TARGET_SCHEMA, TARGET_TABLE, TARGET_SCHEMA_TABLE, engine, df)
+
+    bulk_insert_dataframe(engine,schema=TARGET_SCHEMA, table=TARGET_TABLE, dataframe=df)
+
+    # load_to_silver_01(TARGET_SCHEMA, TARGET_TABLE, TARGET_SCHEMA_TABLE, engine, df)
 
     get_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)
 

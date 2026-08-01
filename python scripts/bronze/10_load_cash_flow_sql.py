@@ -40,6 +40,7 @@ from utils.sql_utils import (
     BRONZE_10_TABLE,
     BRONZE_10_SCHEMA_TABLE,
     print_connection_info,
+    ensure_schema,
     ensure_table,
     truncate_table,
     get_row_count,
@@ -175,12 +176,15 @@ def main():
 
     print_connection_info(engine)
 
+    ensure_schema(
+        engine=engine,
+        schema=TARGET_SCHEMA,)
+    
     ensure_table(
         engine=engine,
         schema=TARGET_SCHEMA,
         table=TARGET_TABLE,
-        create_sql=TABLE_SQL
-    )
+        create_sql=TABLE_SQL)
 
     df = read_json_files("Cash Flow", CASH_FLOW_FOLDER)
     df = clean_dataframe(df)
