@@ -222,3 +222,78 @@ def load_table(schema_table, engine):
     FROM {schema_table}
     """
     return pd.read_sql(query, engine)
+
+
+# ==========================================================
+# Select only the required Silver columns from a DataFrame.
+# ==========================================================
+
+def select_columns(df, columns, table_name):
+    """
+    Raises:
+        KeyError: If one or more requested columns do not exist.
+    """
+
+    missing_columns = set(columns) - set(df.columns)
+
+    if missing_columns:
+        raise KeyError(
+            f"{table_name} is missing columns: {sorted(missing_columns)}"
+        )
+
+    return df[columns].copy()
+
+# ==========================================================
+# Define Silver Schema
+# ==========================================================
+
+PROFILE_COLUMNS = [
+    "symbol",
+    "company_name",
+    "exchange",
+    "sector",
+    "industry",
+    "country",
+    "currency",
+    "market_cap",
+    "price",
+]
+
+INCOME_COLUMNS = [
+    "symbol",
+    "calendar_year",
+    "revenue",
+    "gross_profit",
+    "operating_income",
+    "net_income",
+    "eps",
+]
+
+BALANCE_COLUMNS = [
+    "symbol",
+    "calendar_year",
+    "cash_and_short_term_investments",
+    "total_assets",
+    "total_debt",
+    "net_debt",
+    "total_stockholders_equity",
+]
+
+CASHFLOW_COLUMNS = [
+    "symbol",
+    "calendar_year",
+    "operating_cash_flow",
+    "capital_expenditure",
+    "free_cash_flow",
+]
+
+RATIO_COLUMNS = [
+    "symbol",
+    "gross_margin",
+    "operating_margin",
+    "net_margin",
+    "current_ratio",
+    "debt_to_equity",
+    "pe_ratio",
+    "pb_ratio",
+]

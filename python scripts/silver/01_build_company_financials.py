@@ -50,7 +50,13 @@ from utils.sql_utils import (
     truncate_table,
     get_row_count,
     bulk_insert_dataframe,
-    load_table
+    load_table,
+    select_columns,
+    PROFILE_COLUMNS,
+    INCOME_COLUMNS,
+    BALANCE_COLUMNS,
+    CASHFLOW_COLUMNS,
+    RATIO_COLUMNS
 )
 
 # ============================================================
@@ -64,7 +70,7 @@ company_profile = BRONZE_04_SCHEMA_TABLE
 income_statement = BRONZE_06_SCHEMA_TABLE
 balance_sheet = BRONZE_08_SCHEMA_TABLE
 cash_flow = BRONZE_10_SCHEMA_TABLE
-financial_ratios = BRONZE_12_SCHEMA_TABLE
+ratios_ttm = BRONZE_12_SCHEMA_TABLE
 
 from config.logging_config import setup_logger
 
@@ -77,13 +83,13 @@ def load_to_silver_01(target_schema, target_table, target_schema_table,engine,df
         IF NOT EXISTS (
             SELECT *
             FROM sys.schemas
-            WHERE name={target_schema}
+            WHERE name='{target_schema}'
         )
         EXEC('CREATE SCHEMA {target_schema}')
         """))
 
         conn.execute(text(f"""
-        IF OBJECT_ID({target_schema_table},'U') IS NOT NULL
+        IF OBJECT_ID('{target_schema_table}','U') IS NOT NULL
             DROP TABLE {target_schema_table}
         """))
 
@@ -113,33 +119,36 @@ def main():
     income = load_table(income_statement,engine)
     balance = load_table(balance_sheet,engine)
     cashflow = load_table(cash_flow,engine)
-    ratios = load_table(financial_ratios,engine)
+    ratiosttm = load_table(ratios_ttm,engine)
 
     logger.info("Merging Profile...")
 
-    df = profile.merge(
-        income,
-        on=["symbol", "calendar_year"],
-        how="left"
-    )
+    profile = select_columns(profile, PROFILE_COLUMNS, "company_profil")
+    income = select_columns(income, INCOME_COLUMNS, "income_statement")
+    balance = select_columns(balance, BALANCE_COLUMNS, "balance_sheet")
+    cashflow = select_columns(cashflow, CASHFLOW_COLUMNS, "cash_flow")
+    ratiosttm = select_columns(ratiosttm, RATIO_COLUMNS, "financial_ratios")
 
-    logger.info("Merging Balance Sheet...")
-    df = df.merge(
+    df = income.merge(
         balance,
         on=["symbol", "calendar_year"],
         how="left"
     )
 
-    logger.info("Merging Cash Flow...")
     df = df.merge(
         cashflow,
         on=["symbol", "calendar_year"],
         how="left"
     )
 
-    logger.info("Merging Ratios...")
     df = df.merge(
-        ratios,
+        profile,
+        on="symbol",
+        how="left"
+    )
+
+    df = df.merge(
+        ratiosttm,
         on="symbol",
         how="left"
     )

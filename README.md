@@ -2,9 +2,8 @@
 
 
 
-16 July 2026:
+1 August 2026:
 
-* To check step03, get\_sp500\_tickers function (Repeatable in other scripts, to put in utils file)
-* To utilize the get\_sp500\_tickers function (Import from utils file)
-* To continue step05
+* To double check ensure\_table function in sql\_utils.py and spilt out schema check and table creation function.
+* To utilize the spilt out function and existing bulk insert data frame function into silver step01
 
