@@ -115,9 +115,9 @@ def ensure_schema(
 
     logger.info("Verified Schema %s", schema)
 
-# ==========================================================
-# Create Table from scratch (Not for merging Silver Layer)
-# ==========================================================
+# ==============================================================================
+# Create Table from scratch with known schemas (For Bronze Layer only)
+# ==============================================================================
 
 def ensure_table(engine, schema, table, create_sql):
     """    
@@ -156,6 +156,31 @@ def ensure_table(engine, schema, table, create_sql):
 
     logger.info("Verified Schema Table %s.%s", schema, table)
 
+# ==========================================================
+# Check if the table exists (For Silver & Gold Layer)
+# ==========================================================
+
+def table_exists(engine, schema, table):
+
+    sql = text("""
+        SELECT 1
+        FROM INFORMATION_SCHEMA.TABLES
+        WHERE TABLE_SCHEMA = :schema
+          AND TABLE_NAME = :table
+    """)
+
+    with engine.begin() as conn:
+
+        result = conn.execute(
+            sql,
+            {
+                "schema": schema,
+                "table": table
+            }
+        )
+
+        return result.first() is not None
+    
 # ==========================================================
 # Get Row Count
 # ==========================================================
@@ -238,6 +263,32 @@ def bulk_insert_dataframe(
 
     logger.info("Insert completed.")
 
+
+# ==========================================================
+# Test
+# ==========================================================
+
+def load_dataframe_to_sql(
+    engine,
+    dataframe,
+    schema,
+    table
+):
+    if table_exists(engine, schema, table):
+        truncate_table(engine, schema, table)
+        bulk_insert_dataframe(engine, dataframe, schema, table)
+
+    else:
+        dataframe.to_sql(
+        name=table,
+        schema=schema,
+        con=engine,
+        if_exists="fail",
+        index=False,
+        method="multi",
+        chunksize=1000
+        )
+
 # ==========================================================
 # Load SQL Table
 # ==========================================================
@@ -248,7 +299,6 @@ def load_table(schema_table, engine):
     FROM {schema_table}
     """
     return pd.read_sql(query, engine)
-
 
 # ==========================================================
 # Select only the required Silver columns from a DataFrame.

@@ -47,10 +47,8 @@ from utils.sql_utils import (
     BRONZE_12_SCHEMA_TABLE,
     print_connection_info,
     ensure_schema,
-    ensure_table,
-    truncate_table,
     get_row_count,
-    bulk_insert_dataframe,
+    load_dataframe_to_sql,
     load_table,
     select_columns,
     PROFILE_COLUMNS,
@@ -59,6 +57,10 @@ from utils.sql_utils import (
     CASHFLOW_COLUMNS,
     RATIO_TTM_COLUMNS
 )
+
+from config.logging_config import setup_logger
+
+logger = setup_logger(Path(__file__).stem)
 
 # ============================================================
 # Variables for File Path & Schema, Tables
@@ -160,9 +162,7 @@ def main():
 
     logger.info(f"Rows: {len(df)}")
 
-    bulk_insert_dataframe(engine,schema=TARGET_SCHEMA, table=TARGET_TABLE, dataframe=df)
-
-    # load_to_silver_01(TARGET_SCHEMA, TARGET_TABLE, TARGET_SCHEMA_TABLE, engine, df)
+    load_dataframe_to_sql(engine,schema=TARGET_SCHEMA, table=TARGET_TABLE, dataframe=df)
 
     get_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)
 
