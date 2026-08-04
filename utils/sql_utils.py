@@ -335,7 +335,7 @@ def load_dataframe_to_sql(
         )
 
 # ==========================================================
-# Define column needed for step 13_build_company_financials
+# Bronze input schemas for Step13
 # ==========================================================
 
 PROFILE_COLUMNS = [
@@ -380,6 +380,44 @@ CASHFLOW_COLUMNS = [
 
 RATIO_TTM_COLUMNS = [
     "symbol",
+    "gross_margin",
+    "operating_margin",
+    "net_margin",
+    "current_ratio",
+    "debt_to_equity",
+    "pe_ratio",
+    "pb_ratio",
+]
+
+# ==========================================================
+# Silver output schemas
+# ==========================================================
+
+# step13_company_financials output
+COMPANY_FINANCIAL_COLUMNS = [
+    "symbol",
+    "calendar_year",
+    "company_name",
+    "exchange",
+    "sector",
+    "industry",
+    "country",
+    "currency",
+    "market_cap",
+    "price",
+    "revenue",
+    "gross_profit",
+    "operating_income",
+    "net_income",
+    "eps",
+    "cash_and_short_term_investments",
+    "total_assets",
+    "total_debt",
+    "net_debt",
+    "total_stockholders_equity",
+    "operating_cash_flow",
+    "capital_expenditure",
+    "free_cash_flow",
     "gross_margin",
     "operating_margin",
     "net_margin",

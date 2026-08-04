@@ -55,7 +55,15 @@ from utils.sql_utils import (
     INCOME_COLUMNS,
     BALANCE_COLUMNS,
     CASHFLOW_COLUMNS,
-    RATIO_TTM_COLUMNS
+    RATIO_TTM_COLUMNS,
+    COMPANY_FINANCIAL_COLUMNS
+)
+
+from utils.validation_utils import(
+    validate_primary_key,
+    validate_columns,
+    validate_nulls,
+    validate_row_count
 )
 
 from config.logging_config import setup_logger
@@ -160,7 +168,11 @@ def main():
         how="left"
     )
 
-    logger.info(f"Rows: {len(df)}")
+
+    validate_columns(df,COMPANY_FINANCIAL_COLUMNS)
+    validate_primary_key(df,["symbol","calendar_year"])
+    validate_nulls(df,["symbol","calendar_year","revenue","net_income"])
+    validate_row_count(df)
 
     load_dataframe_to_sql(engine,schema=TARGET_SCHEMA, table=TARGET_TABLE, dataframe=df)
 
