@@ -44,7 +44,7 @@ from utils.sql_utils import (
     ensure_table,
     truncate_table,
     get_row_count,
-    bulk_insert_dataframe
+    bulk_append_dataframe
 )
 
 from utils.csv_json_utils import(
@@ -191,7 +191,7 @@ def main():
 
     truncate_table(engine, TARGET_SCHEMA, TARGET_TABLE)
 
-    bulk_insert_dataframe(
+    bulk_append_dataframe(
         engine,
         schema=BRONZE_SCHEMA, table=TARGET_TABLE, dataframe=df
     )

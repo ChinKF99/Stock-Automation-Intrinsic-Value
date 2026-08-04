@@ -204,7 +204,7 @@ def select_columns(df, columns, table_name):
 # Append DataFrame into existing created SQL Table
 # ==========================================================
 
-def bulk_insert_dataframe(
+def bulk_append_dataframe(
     engine: Engine,
     dataframe,
     schema: str,
@@ -321,7 +321,7 @@ def load_dataframe_to_sql(
     """
     if table_exists(engine, schema, table):
         truncate_table(engine, schema, table)
-        bulk_insert_dataframe(engine, dataframe, schema, table)
+        bulk_append_dataframe(engine, dataframe, schema, table)
 
     else:
         dataframe.to_sql(
