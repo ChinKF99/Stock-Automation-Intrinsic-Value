@@ -2,7 +2,6 @@
 ============================================================
 Validaton Function for dataframe before merging/appending
 dataframe to SQL.
-
 ============================================================
 """
 
@@ -104,9 +103,12 @@ def validate_columns(df, expected_columns):
     """
 
     missing = set(expected_columns) - set(df.columns)
+    unexpected = set(df.columns) - set(expected_columns)
 
     if missing:
-
         raise ValueError(f"Missing columns: {sorted(missing)}")
+
+    if unexpected:
+        raise ValueError(f"Unexpected columns: {sorted(unexpected)}")
 
     logger.info("Column validation passed.")

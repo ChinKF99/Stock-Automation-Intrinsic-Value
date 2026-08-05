@@ -48,9 +48,10 @@ BRONZE_12_TABLE = 'ratios_ttm'
 BRONZE_12_SCHEMA_TABLE = f"{BRONZE_SCHEMA}.{BRONZE_12_TABLE}"
 
 # Silver Tables
-SILVER_01_TABLE = 'company_financials'
-SILVER_01_SCHEMA_TABLE = f"{SILVER_SCHEMA}.{SILVER_01_TABLE}"
-
+SILVER_13_TABLE = 'company_financials'
+SILVER_13_SCHEMA_TABLE = f"{SILVER_SCHEMA}.{SILVER_13_TABLE}"
+SILVER_14_TABLE = 'company_growth_metrics'
+SILVER_14_SCHEMA_TABLE = f"{SILVER_SCHEMA}.{SILVER_14_TABLE}"
 
 # *****************************************************************************
 # UNIVERSAL SQL SCRIPTS
@@ -393,7 +394,7 @@ RATIO_TTM_COLUMNS = [
 # Silver output schemas
 # ==========================================================
 
-# step13_company_financials output
+# step13_company_financials Columns
 COMPANY_FINANCIAL_COLUMNS = [
     "symbol",
     "calendar_year",
@@ -425,4 +426,19 @@ COMPANY_FINANCIAL_COLUMNS = [
     "debt_to_equity",
     "pe_ratio",
     "pb_ratio",
+]
+
+# step14_company_growth_metrics Columns
+COMPANY_GROWTH_METRICS_COLUMNS =[
+    "symbol",
+    "calendar_year",
+    "revenue_growth",
+    "gross_profit_growth",
+    "operating_income_growth",
+    "net_income_growth",
+    "eps_growth",
+    "operating_cash_flow_growth",
+    "free_cash_flow_growth",
+    "equity_growth",
+    "debt_growth"
 ]

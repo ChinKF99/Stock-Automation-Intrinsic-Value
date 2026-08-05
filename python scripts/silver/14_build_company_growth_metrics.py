@@ -1,16 +1,16 @@
 """
 ============================================================
-13_build_company_financials
+14_build_company_growth_metrics.py
 
-Build silver layer for company financials by merging
-bronze table data.
+Build silver table company growth metrics using data
+from silver layer.
 
 Source
 ------
-All bronze tables.
+silver.company_financials
 
 Target:
-    silver.company_financials
+    silver.company_growth_metrics
 ============================================================
 """
 
@@ -39,23 +39,15 @@ from utils.sql_utils import (
     SILVER_SCHEMA,
     SILVER_13_TABLE,
     SILVER_13_SCHEMA_TABLE,
-    BRONZE_04_SCHEMA_TABLE,
-    BRONZE_06_SCHEMA_TABLE,
-    BRONZE_08_SCHEMA_TABLE,
-    BRONZE_10_SCHEMA_TABLE,
-    BRONZE_12_SCHEMA_TABLE,
+    SILVER_14_TABLE,
+    SILVER_14_SCHEMA_TABLE,
     print_connection_info,
     ensure_schema,
     get_row_count,
     load_dataframe_to_sql,
     load_table,
     select_columns,
-    PROFILE_COLUMNS,
-    INCOME_COLUMNS,
-    BALANCE_COLUMNS,
-    CASHFLOW_COLUMNS,
-    RATIO_TTM_COLUMNS,
-    COMPANY_FINANCIAL_COLUMNS
+    COMPANY_GROWTH_METRICS_COLUMNS
 )
 
 from utils.validation_utils import(
@@ -74,13 +66,8 @@ logger = setup_logger(Path(__file__).stem)
 # ============================================================
 
 TARGET_SCHEMA = SILVER_SCHEMA
-TARGET_TABLE = SILVER_13_TABLE
-TARGET_SCHEMA_TABLE = SILVER_13_SCHEMA_TABLE
-company_profile = BRONZE_04_SCHEMA_TABLE
-income_statement = BRONZE_06_SCHEMA_TABLE
-balance_sheet = BRONZE_08_SCHEMA_TABLE
-cash_flow = BRONZE_10_SCHEMA_TABLE
-ratios_ttm = BRONZE_12_SCHEMA_TABLE
+TARGET_TABLE = SILVER_14_TABLE
+TARGET_SCHEMA_TABLE = SILVER_14_SCHEMA_TABLE
 
 # ==========================================================
 # Main
@@ -89,7 +76,7 @@ ratios_ttm = BRONZE_12_SCHEMA_TABLE
 def main():
 
     logger.info("=" * 60)
-    logger.info("Building Silver Company Financials")
+    logger.info("Building Silver Company Growth Metrics")
     logger.info("=" * 60)
 
     engine = get_sqlalchemy_engine()
@@ -99,49 +86,58 @@ def main():
     engine=engine,
     schema=TARGET_SCHEMA,)
 
-    profile = load_table(company_profile,engine)
-    income = load_table(income_statement,engine)
-    balance = load_table(balance_sheet,engine)
-    cashflow = load_table(cash_flow,engine)
-    ratiosttm = load_table(ratios_ttm,engine)
+    df = load_table(SILVER_13_SCHEMA_TABLE,engine)
 
-    logger.info("Merging Profile...")
+    df = df.sort_values(["symbol","calendar_year"])
 
-    profile = select_columns(profile, PROFILE_COLUMNS, "company_profile")
-    income = select_columns(income, INCOME_COLUMNS, "income_statement")
-    balance = select_columns(balance, BALANCE_COLUMNS, "balance_sheet")
-    cashflow = select_columns(cashflow, CASHFLOW_COLUMNS, "cash_flow")
-    ratiosttm = select_columns(ratiosttm, RATIO_TTM_COLUMNS, "financial_ratios")
+    df["revenue_growth"] = (
+        df.groupby("symbol")["revenue"].pct_change())
 
-    df = income.merge(
-        balance,
-        on=["symbol", "calendar_year"],
-        how="left"
-    )
+    df["gross_profit_growth"] = (
+        df.groupby("symbol")["gross_profit"].pct_change())
 
-    df = df.merge(
-        cashflow,
-        on=["symbol", "calendar_year"],
-        how="left"
-    )
+    df["operating_income_growth"] = (
+        df.groupby("symbol")["operating_income"].pct_change())
 
-    df = df.merge(
-        profile,
-        on="symbol",
-        how="left"
-    )
+    df["net_income_growth"] = (
+        df.groupby("symbol")["net_income"].pct_change())
 
-    df = df.merge(
-        ratiosttm,
-        on="symbol",
-        how="left"
-    )
+    df["eps_growth"] = (
+        df.groupby("symbol")["eps"].pct_change())
 
+    df["free_cash_flow_growth"] = (
+        df.groupby("symbol")["free_cash_flow"].pct_change())
 
-    validate_columns(df,COMPANY_FINANCIAL_COLUMNS)
+    df["operating_cash_flow_growth"] = (
+        df.groupby("symbol")["operating_cash_flow"].pct_change())
+
+    df["equity_growth"] = (
+        df.groupby("symbol")["total_stockholders_equity"].pct_change())
+
+    df["debt_growth"] = (
+        df.groupby("symbol")["total_debt"].pct_change())
+
+    df = df[
+        [
+            "symbol",
+            "calendar_year",
+            "revenue_growth",
+            "gross_profit_growth",
+            "operating_income_growth",
+            "net_income_growth",
+            "eps_growth",
+            "operating_cash_flow_growth",
+            "free_cash_flow_growth",
+            "equity_growth",
+            "debt_growth"
+        ]
+    ]
+
+    validate_columns(df,COMPANY_GROWTH_METRICS_COLUMNS)
     validate_primary_key(df,["symbol","calendar_year"])
-    validate_nulls(df,["symbol","calendar_year","revenue","net_income"])
     validate_row_count(df)
+    # All columns for year 2021 will be null, due to no 2020 year to compare.
+    validate_nulls(df,["symbol","calendar_year"]) 
 
     load_dataframe_to_sql(engine, df, TARGET_SCHEMA, TARGET_TABLE)
 
