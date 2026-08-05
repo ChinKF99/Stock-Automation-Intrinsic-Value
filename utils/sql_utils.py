@@ -52,6 +52,8 @@ SILVER_13_TABLE = 'company_financials'
 SILVER_13_SCHEMA_TABLE = f"{SILVER_SCHEMA}.{SILVER_13_TABLE}"
 SILVER_14_TABLE = 'company_growth_metrics'
 SILVER_14_SCHEMA_TABLE = f"{SILVER_SCHEMA}.{SILVER_14_TABLE}"
+SILVER_15_TABLE = 'company_financial_ratios'
+SILVER_15_SCHEMA_TABLE = f"{SILVER_SCHEMA}.{SILVER_15_TABLE}"
 
 # *****************************************************************************
 # UNIVERSAL SQL SCRIPTS
@@ -441,4 +443,21 @@ COMPANY_GROWTH_METRICS_COLUMNS =[
     "free_cash_flow_growth",
     "equity_growth",
     "debt_growth"
+]
+
+# step15_company_financial_ratios Columns
+COMPANY_FINANCIAL_RATIO_COLUMNS = [
+    "symbol",
+    "calendar_year",
+    "gross_margin",
+    "operating_margin",
+    "net_margin",
+    "fcf_margin",
+    "operating_cash_flow_margin",
+    "capex_ratio",
+    "debt_to_equity",
+    "debt_to_assets",
+    "cash_to_debt",
+    "asset_turnover",
+    "equity_ratio",
 ]

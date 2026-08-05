@@ -37,7 +37,6 @@ from config.config import (
  
 from utils.sql_utils import (
     SILVER_SCHEMA,
-    SILVER_13_TABLE,
     SILVER_13_SCHEMA_TABLE,
     SILVER_14_TABLE,
     SILVER_14_SCHEMA_TABLE,
@@ -46,7 +45,6 @@ from utils.sql_utils import (
     get_row_count,
     load_dataframe_to_sql,
     load_table,
-    select_columns,
     COMPANY_GROWTH_METRICS_COLUMNS
 )
 
@@ -132,6 +130,8 @@ def main():
             "debt_growth"
         ]
     ]
+
+    df = df.round(4)
 
     validate_columns(df,COMPANY_GROWTH_METRICS_COLUMNS)
     validate_primary_key(df,["symbol","calendar_year"])
