@@ -115,7 +115,7 @@ def main():
     df["debt_growth"] = (
         df.groupby("symbol")["total_debt"].pct_change())
 
-    df = df[
+    growth_df = df[
         [
             "symbol",
             "calendar_year",
@@ -131,15 +131,15 @@ def main():
         ]
     ]
 
-    df = df.round(4)
+    growth_df = growth_df.round(4)
 
-    validate_columns(df,COMPANY_GROWTH_METRICS_COLUMNS)
-    validate_primary_key(df,["symbol","calendar_year"])
-    validate_row_count(df)
+    validate_columns(growth_df,COMPANY_GROWTH_METRICS_COLUMNS)
+    validate_primary_key(growth_df,["symbol","calendar_year"])
+    validate_row_count(growth_df)
     # All columns for year 2021 will be null, due to no 2020 year to compare.
-    validate_nulls(df,["symbol","calendar_year"]) 
+    validate_nulls(growth_df,["symbol","calendar_year"]) 
 
-    load_dataframe_to_sql(engine, df, TARGET_SCHEMA, TARGET_TABLE)
+    load_dataframe_to_sql(engine, growth_df, TARGET_SCHEMA, TARGET_TABLE)
 
     get_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)
 

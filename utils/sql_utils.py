@@ -32,6 +32,7 @@ logger = setup_logger(log_name)
 # Schemas
 BRONZE_SCHEMA = "bronze"
 SILVER_SCHEMA = "silver"
+GOLD_SCHEMA = "gold"
 
 # Bronze Tables
 BRONZE_02_TABLE = "sp500_tickers"
@@ -54,6 +55,10 @@ SILVER_14_TABLE = 'company_growth_metrics'
 SILVER_14_SCHEMA_TABLE = f"{SILVER_SCHEMA}.{SILVER_14_TABLE}"
 SILVER_15_TABLE = 'company_financial_ratios'
 SILVER_15_SCHEMA_TABLE = f"{SILVER_SCHEMA}.{SILVER_15_TABLE}"
+
+# Gold Tables
+GOLD_16_TABLE = 'build_dcf_assumptions'
+GOLD_16_SCHEMA_TABLE = f"{GOLD_SCHEMA}.{GOLD_16_TABLE}"
 
 # *****************************************************************************
 # UNIVERSAL SQL SCRIPTS
@@ -338,7 +343,7 @@ def load_dataframe_to_sql(
         )
 
 # ==========================================================
-# Bronze input schemas for Step13
+# Bronze input columns for Step13
 # ==========================================================
 
 PROFILE_COLUMNS = [
@@ -393,7 +398,7 @@ RATIO_TTM_COLUMNS = [
 ]
 
 # ==========================================================
-# Silver output schemas
+# Silver output Columns
 # ==========================================================
 
 # step13_company_financials Columns
@@ -460,4 +465,21 @@ COMPANY_FINANCIAL_RATIO_COLUMNS = [
     "cash_to_debt",
     "asset_turnover",
     "equity_ratio",
+]
+
+# ==========================================================
+# Gold output Columns
+# ==========================================================
+
+DCF_ASSUMPTION_COLUMNS = [
+    "symbol",
+    "calendar_year",
+    "price",
+    "starting_fcf",
+    "growth_rate",
+    "starting_operating_margin",
+    "tax_rate",
+    "discount_rate",
+    "terminal_growth",
+    "projection_years",
 ]

@@ -145,7 +145,7 @@ def main():
         df["total_assets"]
     )
 
-    df = df[
+    ratios_df = df[
         [
             "symbol",
             "calendar_year",
@@ -163,14 +163,14 @@ def main():
         ]
     ]
 
-    df = df.round(4) # Round to 4 decimal points for less noise
+    ratios_df = ratios_df.round(4) # Round to 4 decimal points for less noise
 
-    validate_columns(df,COMPANY_FINANCIAL_RATIO_COLUMNS)
-    validate_primary_key(df,["symbol", "calendar_year"])
-    validate_nulls(df,["symbol", "calendar_year"])
-    validate_row_count(df)
+    validate_columns(ratios_df,COMPANY_FINANCIAL_RATIO_COLUMNS)
+    validate_primary_key(ratios_df,["symbol", "calendar_year"])
+    validate_nulls(ratios_df,["symbol", "calendar_year"])
+    validate_row_count(ratios_df)
 
-    load_dataframe_to_sql(engine, df, TARGET_SCHEMA, TARGET_TABLE)
+    load_dataframe_to_sql(engine, ratios_df, TARGET_SCHEMA, TARGET_TABLE)
 
     get_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)
 
