@@ -131,13 +131,6 @@ def main():
         how="left"
     )
 
-    df = df.merge(
-        ratiosttm,
-        on="symbol",
-        how="left"
-    )
-
-
     validate_columns(df,COMPANY_FINANCIAL_COLUMNS)
     validate_primary_key(df,["symbol","calendar_year"])
     validate_nulls(df,["symbol","calendar_year","revenue","net_income"])

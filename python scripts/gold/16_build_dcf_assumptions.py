@@ -98,8 +98,6 @@ def main():
 
     ratios = load_table(SILVER_15_SCHEMA_TABLE,engine)
 
-    print(ratios.columns.tolist()) # For debug purposes
-  
     financials = (financials.sort_values(["symbol", "calendar_year"])
                   .groupby("symbol").tail(1))
 
@@ -109,52 +107,45 @@ def main():
     ratios = (ratios.sort_values(["symbol", "calendar_year"])
               .groupby("symbol").tail(1))
 
-    df = financials.merge(growth, on="symbol", how="left")
+    df = financials.merge(growth, on=["symbol", "calendar_year"], how="left")
 
-    df = df.merge(ratios, on="symbol", how="left")
+    df = df.merge(ratios, on=["symbol", "calendar_year"], how="left")
 
     df["discount_rate"] = DCF_DEFAULTS["discount_rate"]
     df["terminal_growth"] = DCF_DEFAULTS["terminal_growth"]
     df["projection_years"] = DCF_DEFAULTS["projection_years"]
     df["tax_rate"] = DCF_DEFAULTS["tax_rate"]
 
-    df["growth_rate"] = (df[
-        [
-            "revenue_growth",
-            "operating_income_growth",
-            "free_cash_flow_growth"
-        ]].mean(axis=1))
+    df["growth_rate"] = df["revenue_growth"]
 
     df["starting_fcf"] = df["free_cash_flow"]
 
-    print(df.columns.tolist()) # For debug purposes
-  
-#     df["starting_operating_margin"] = df["operating_margin"]
+    df["starting_operating_margin"] = df["operating_margin"]
+
+    dcfa_df = df[
+        [
+            "symbol",
+            "calendar_year",
+            "price",
+            "starting_fcf",
+            "growth_rate",
+            "starting_operating_margin",
+            "weighted_average_shs_out",
+            "tax_rate",
+            "discount_rate",
+            "terminal_growth",
+            "projection_years"
+            ]
+    ]
+
+    validate_columns(dcfa_df,DCF_ASSUMPTION_COLUMNS)
+    validate_primary_key(dcfa_df,["symbol"])
+    validate_nulls(dcfa_df,["symbol","starting_fcf","growth_rate","discount_rate"])
+    validate_row_count(dcfa_df)
+
+    load_dataframe_to_sql(engine, dcfa_df, TARGET_SCHEMA, TARGET_TABLE)
     
-
-#     dcf_df = df[
-#         [
-#             "symbol",
-#             "calendar_year",
-#             "price",
-#             "starting_fcf",
-#             "growth_rate",
-#             "starting_operating_margin",
-#             "tax_rate",
-#             "discount_rate",
-#             "terminal_growth",
-#             "projection_years"
-#             ]
-#     ]
-
-#     validate_columns(dcf_df,DCF_ASSUMPTION_COLUMNS)
-#     validate_primary_key(dcf_df,["symbol"])
-#     validate_nulls(dcf_df,["symbol","starting_fcf","growth_rate","discount_rate"])
-#     validate_row_count(dcf_df)
-
-#     load_dataframe_to_sql(engine, dcf_df, TARGET_SCHEMA, TARGET_TABLE)
-    
-#     get_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)
+    get_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)
     
 if __name__ == "__main__":
     main()

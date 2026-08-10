@@ -59,6 +59,10 @@ SILVER_15_SCHEMA_TABLE = f"{SILVER_SCHEMA}.{SILVER_15_TABLE}"
 # Gold Tables
 GOLD_16_TABLE = 'build_dcf_assumptions'
 GOLD_16_SCHEMA_TABLE = f"{GOLD_SCHEMA}.{GOLD_16_TABLE}"
+GOLD_17_TABLE = 'build_intrinsic_value'
+GOLD_17_SCHEMA_TABLE = f"{GOLD_SCHEMA}.{GOLD_17_TABLE}"
+
+
 
 # *****************************************************************************
 # UNIVERSAL SQL SCRIPTS
@@ -366,6 +370,7 @@ INCOME_COLUMNS = [
     "operating_income",
     "net_income",
     "eps",
+    "weighted_average_shs_out"
 ]
 
 BALANCE_COLUMNS = [
@@ -403,8 +408,10 @@ RATIO_TTM_COLUMNS = [
 
 # step13_company_financials Columns
 COMPANY_FINANCIAL_COLUMNS = [
+    #Primary Key Column (Use for merge)
     "symbol",
     "calendar_year",
+    # Company Profile Column
     "company_name",
     "exchange",
     "sector",
@@ -413,26 +420,23 @@ COMPANY_FINANCIAL_COLUMNS = [
     "currency",
     "market_cap",
     "price",
+    # Income Statement Column
     "revenue",
     "gross_profit",
     "operating_income",
     "net_income",
     "eps",
+    "weighted_average_shs_out",
+    # Balance Statement Column
     "cash_and_short_term_investments",
     "total_assets",
     "total_debt",
     "net_debt",
     "total_stockholders_equity",
+    # Cashflow Column
     "operating_cash_flow",
     "capital_expenditure",
     "free_cash_flow",
-    "gross_margin",
-    "operating_margin",
-    "net_margin",
-    "current_ratio",
-    "debt_to_equity",
-    "pe_ratio",
-    "pb_ratio",
 ]
 
 # step14_company_growth_metrics Columns
@@ -478,8 +482,18 @@ DCF_ASSUMPTION_COLUMNS = [
     "starting_fcf",
     "growth_rate",
     "starting_operating_margin",
+    "weighted_average_shs_out",
     "tax_rate",
     "discount_rate",
     "terminal_growth",
     "projection_years",
+]
+
+INTRINSIC_VALUE_COLUMNS = [
+    "symbol",
+    "calendar_year",
+    "enterprise_value",
+    "intrinsic_value",
+    "current_price",
+    "margin_of_safety"
 ]
