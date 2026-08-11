@@ -152,3 +152,11 @@ FMP_CASHFLOW_URL = (
 FMP_RATIOS_URL = (
     "https://financialmodelingprep.com/stable/ratios-ttm"
 )
+
+
+DCF_DEFAULTS = {
+    "discount_rate": 0.09,
+    "terminal_growth": 0.025,
+    "projection_years": 10,
+    "tax_rate": 0.15,
+}

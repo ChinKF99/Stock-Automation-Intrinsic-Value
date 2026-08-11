@@ -6,7 +6,10 @@ Constants used throughout Gold ETL pipelines.
 ============================================================
 """
 
+from __future__ import annotations
 import pandas as pd
+import numpy as np
+
 
 DCF_DEFAULTS = {
     "discount_rate": 0.09,
@@ -16,7 +19,113 @@ DCF_DEFAULTS = {
 }
 
 # ==========================================================
-# Step 17 Function for DCF
+# Step 16 Function for DCF Assumptions
+# ==========================================================
+
+def calculate_revenue_growth_metrics(
+    df: pd.DataFrame,
+    revenue_column: str = "revenue",
+    lookback_years: int = 5,
+) -> pd.DataFrame:
+    """
+    Calculate historical revenue metrics for each company.
+
+    Returns
+    -------
+    symbol
+    revenue_cagr
+    revenue_growth_avg
+    earliest_revenue
+    latest_revenue
+    years_of_history
+    """
+
+    required_columns = [
+        "symbol",
+        "calendar_year",
+        revenue_column
+        ]
+
+    missing = [
+        c for c in required_columns
+        if c not in df.columns
+        ]
+
+    if missing:
+        raise ValueError(
+            f"Missing columns: {missing}"
+        )
+
+    df = (
+        df
+        .copy()
+        .sort_values(
+            ["symbol", "calendar_year"]
+        )
+    )
+
+    results = []
+
+    for symbol, group in df.groupby("symbol"):
+
+        group = (
+            group[
+                ["calendar_year", revenue_column]
+            ]
+            .dropna()
+            .sort_values("calendar_year")
+        )
+
+        if len(group) < 2:
+            continue
+
+        # -------------------------
+        # Keep latest N years
+        # -------------------------
+
+        group = group.tail(lookback_years)
+
+        beginning = group.iloc[0][revenue_column]
+        ending = group.iloc[-1][revenue_column]
+
+        periods = len(group) - 1
+
+        if beginning <= 0 or ending <= 0:
+
+            revenue_cagr = np.nan
+
+        else:
+
+            revenue_cagr = (
+                (ending / beginning)
+                ** (1 / periods)
+            ) - 1
+
+        growth_series = (
+            group[revenue_column]
+            .pct_change()
+            .dropna()
+        )
+
+        revenue_growth_avg = (
+            growth_series.mean()
+            if len(growth_series)
+            else np.nan
+        )
+
+        results.append({
+            "symbol": symbol,
+            "historical_growth_rate": revenue_cagr,
+            "revenue_growth_avg": revenue_growth_avg,
+            "earliest_revenue": beginning,
+            "latest_revenue": ending,
+            "years_of_history": len(group)
+        })
+
+    return pd.DataFrame(results)
+
+# ==========================================================
+# Step 17 Function for DCF Intrinsic Value
 # ==========================================================
 
 def forecast_free_cash_flows(
@@ -77,14 +186,29 @@ def calculate_enterprise_value(
 ) -> float:
     """
     Enterprise Value =
-    Sum of discounted cash flows +
-    Discounted Terminal Value
+    Sum of discounted projected cash flows +
+    Discounted terminal value.
     """
-    return (
-        sum(discounted_cashflows)+discounted_terminal_value)
+    enterprise_value = (
+        sum(discounted_cashflows)
+        + discounted_terminal_value)
+    return enterprise_value
+
+def calculate_equity_value(
+    enterprise_value: float,
+    net_debt: float
+) -> float:
+    """
+    Equity Value =
+    Enterprise Value - Net Debt
+
+    Net debt may be negative if a company holds more cash than debt,
+    which will increase the equity value.
+    """
+    return enterprise_value - net_debt
 
 def calculate_intrinsic_value(
-    enterprise_value: float,
+    equity_value: float,
     shares_outstanding: float
 ) -> float:
     """
@@ -92,7 +216,7 @@ def calculate_intrinsic_value(
     """
     if shares_outstanding <= 0:
         return None
-    return (enterprise_value/shares_outstanding)
+    return ( equity_value/ shares_outstanding)
 
 def calculate_margin_of_safety(
     intrinsic_value: float,
@@ -105,4 +229,3 @@ def calculate_margin_of_safety(
         return None
     
     return (intrinsic_value-current_price) / current_price
-

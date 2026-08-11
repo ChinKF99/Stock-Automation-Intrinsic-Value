@@ -480,12 +480,17 @@ DCF_ASSUMPTION_COLUMNS = [
     "calendar_year",
     "price",
     "starting_fcf",
-    "growth_rate",
+    "historical_growth_rate",
+    "revenue_growth_avg",
+    "earliest_revenue",
+    "latest_revenue",
+    "years_of_history",  
     "starting_operating_margin",
     "weighted_average_shs_out",
     "tax_rate",
     "discount_rate",
     "terminal_growth",
+    "net_debt",
     "projection_years",
 ]
 
@@ -493,6 +498,7 @@ INTRINSIC_VALUE_COLUMNS = [
     "symbol",
     "calendar_year",
     "enterprise_value",
+    "equity_value",
     "intrinsic_value",
     "current_price",
     "margin_of_safety"

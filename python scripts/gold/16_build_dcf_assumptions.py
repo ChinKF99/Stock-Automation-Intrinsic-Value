@@ -60,7 +60,8 @@ from utils.validation_utils import(
 )
 
 from utils.dcf_utils import(
-    DCF_DEFAULTS
+    DCF_DEFAULTS,
+    calculate_revenue_growth_metrics
 )
 
 from config.logging_config import setup_logger
@@ -98,6 +99,9 @@ def main():
 
     ratios = load_table(SILVER_15_SCHEMA_TABLE,engine)
 
+    # Produce a fair growth rate using CAGR Formula
+    historical_growth = calculate_revenue_growth_metrics(financials).round(4)
+
     financials = (financials.sort_values(["symbol", "calendar_year"])
                   .groupby("symbol").tail(1))
 
@@ -111,12 +115,12 @@ def main():
 
     df = df.merge(ratios, on=["symbol", "calendar_year"], how="left")
 
+    df = df.merge(historical_growth,on="symbol",how="left")
+
     df["discount_rate"] = DCF_DEFAULTS["discount_rate"]
     df["terminal_growth"] = DCF_DEFAULTS["terminal_growth"]
     df["projection_years"] = DCF_DEFAULTS["projection_years"]
     df["tax_rate"] = DCF_DEFAULTS["tax_rate"]
-
-    df["growth_rate"] = df["revenue_growth"]
 
     df["starting_fcf"] = df["free_cash_flow"]
 
@@ -128,19 +132,24 @@ def main():
             "calendar_year",
             "price",
             "starting_fcf",
-            "growth_rate",
+            "historical_growth_rate",
+            "revenue_growth_avg",
+            "earliest_revenue",
+            "latest_revenue",
+            "years_of_history",  
             "starting_operating_margin",
             "weighted_average_shs_out",
             "tax_rate",
             "discount_rate",
             "terminal_growth",
-            "projection_years"
+            "net_debt",
+            "projection_years",
             ]
     ]
 
     validate_columns(dcfa_df,DCF_ASSUMPTION_COLUMNS)
     validate_primary_key(dcfa_df,["symbol"])
-    validate_nulls(dcfa_df,["symbol","starting_fcf","growth_rate","discount_rate"])
+    validate_nulls(dcfa_df,DCF_ASSUMPTION_COLUMNS)
     validate_row_count(dcfa_df)
 
     load_dataframe_to_sql(engine, dcfa_df, TARGET_SCHEMA, TARGET_TABLE)

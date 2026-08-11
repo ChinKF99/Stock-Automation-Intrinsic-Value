@@ -62,6 +62,7 @@ from utils.dcf_utils import(
     calculate_terminal_value,
     discount_terminal_value,
     calculate_enterprise_value,
+    calculate_equity_value,
     calculate_intrinsic_value,
     calculate_margin_of_safety
 )
@@ -103,11 +104,11 @@ def main():
 
         cashflows = forecast_free_cash_flows(
             row["starting_fcf"],
-            row["growth_rate"],
+            row["historical_growth_rate"],
             int(row["projection_years"])
         )
 
-        discounted = discount_cash_flows(
+        discounted_cash_flow = discount_cash_flows(
             cashflows,
             row["discount_rate"]
         )
@@ -125,12 +126,17 @@ def main():
         )
 
         enterprise_value = calculate_enterprise_value(
-            discounted,
+            discounted_cash_flow,
             discounted_terminal
         )
 
-        intrinsic_value = calculate_intrinsic_value(
+        equity_value = calculate_equity_value(
             enterprise_value,
+            row["net_debt"]
+        )
+
+        intrinsic_value = calculate_intrinsic_value(
+            equity_value,
             row["weighted_average_shs_out"]
         )
 
@@ -143,6 +149,7 @@ def main():
             "symbol": row["symbol"],
             "calendar_year": row["calendar_year"],
             "enterprise_value": enterprise_value,
+            "equity_value": equity_value,
             "intrinsic_value": intrinsic_value,
             "current_price": row["price"],
             "margin_of_safety": margin_of_safety
