@@ -9,10 +9,10 @@ Constants used throughout Gold ETL pipelines.
 from __future__ import annotations
 import pandas as pd
 import numpy as np
+import math
 
 
 DCF_DEFAULTS = {
-    "discount_rate": 0.09,
     "terminal_growth": 0.025,
     "projection_years": 10,
     "tax_rate": 0.15,
@@ -124,24 +124,92 @@ def calculate_revenue_growth_metrics(
 
     return pd.DataFrame(results)
 
+def calculate_average_fcf(financials, years=3):
+    """
+    Calculate average Free Cash Flow over the latest N years.
+    """
+
+    financials = financials.sort_values(
+        ["symbol", "calendar_year"]
+    )
+
+    avg_fcf = (
+        financials
+        .groupby("symbol")
+        .tail(years)
+        .groupby("symbol")["free_cash_flow"]
+        .mean()
+        .reset_index()
+        .rename(columns={
+            "free_cash_flow": "starting_fcf"
+        })
+    )
+
+    return avg_fcf
+
+def calculate_discount_rate(
+    beta,
+    risk_free_rate=0.04,
+    market_premium=0.05
+):
+    """
+    Calculate Cost of Equity using a simplified CAPM.
+    """
+
+    if beta is None:
+        beta = 1
+
+    return risk_free_rate + beta * market_premium
+
 # ==========================================================
 # Step 17 Function for DCF Intrinsic Value
 # ==========================================================
 
-def forecast_free_cash_flows(
+def get_growth_rate(
+    initial_growth,
+    terminal_growth,
+    year,
+    projection_years
+):
+    """
+    Linearly reduce growth from the initial growth rate
+    to the terminal growth rate.
+    """
+
+    if projection_years <= 1:
+        return terminal_growth
+
+    step = (
+        initial_growth - terminal_growth
+    ) / (projection_years - 1)
+
+    growth = initial_growth - (
+        step * (year - 1)
+    )
+
+    return max(growth, terminal_growth)
+
+def forecast_cashflows(
     starting_fcf: float,
-    growth_rate: float,
+    initial_growth: float,
+    terminal_growth: float,
     projection_years: int
 ) -> list:
     """
     Forecast future Free Cash Flows using a constant growth model.
     """
-    cashflows = []
+    forecast = []
     fcf = starting_fcf
-    for _ in range(projection_years):
-        fcf *= (1 + growth_rate)
-        cashflows.append(fcf)
-    return cashflows
+    for year in range(1, projection_years + 1):
+        growth = get_growth_rate(
+            initial_growth,
+            terminal_growth,
+            year,
+            projection_years
+        )
+        fcf *= (1 + growth)
+        forecast.append(fcf)
+    return forecast
 
 def discount_cash_flows(
     cashflows: list,

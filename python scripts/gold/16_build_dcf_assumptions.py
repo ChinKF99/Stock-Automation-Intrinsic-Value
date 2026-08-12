@@ -61,7 +61,9 @@ from utils.validation_utils import(
 
 from utils.dcf_utils import(
     DCF_DEFAULTS,
-    calculate_revenue_growth_metrics
+    calculate_revenue_growth_metrics,
+    calculate_average_fcf,
+    calculate_discount_rate
 )
 
 from config.logging_config import setup_logger
@@ -101,6 +103,7 @@ def main():
 
     # Produce a fair growth rate using CAGR Formula
     historical_growth = calculate_revenue_growth_metrics(financials).round(4)
+    average_fcf = calculate_average_fcf(financials, years=3)
 
     financials = (financials.sort_values(["symbol", "calendar_year"])
                   .groupby("symbol").tail(1))
@@ -117,12 +120,12 @@ def main():
 
     df = df.merge(historical_growth,on="symbol",how="left")
 
-    df["discount_rate"] = DCF_DEFAULTS["discount_rate"]
+    df = df.merge(average_fcf,on="symbol",how="left")
+
+    df["discount_rate"] = (df["beta"].fillna(1).apply(calculate_discount_rate))
     df["terminal_growth"] = DCF_DEFAULTS["terminal_growth"]
     df["projection_years"] = DCF_DEFAULTS["projection_years"]
     df["tax_rate"] = DCF_DEFAULTS["tax_rate"]
-
-    df["starting_fcf"] = df["free_cash_flow"]
 
     df["starting_operating_margin"] = df["operating_margin"]
 
@@ -155,6 +158,19 @@ def main():
     load_dataframe_to_sql(engine, dcfa_df, TARGET_SCHEMA, TARGET_TABLE)
     
     get_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)
+
+    print(
+    df[
+        [
+            "symbol",
+            "starting_fcf",
+            "historical_growth_rate",
+            "discount_rate",
+            "terminal_growth",
+            "weighted_average_shs_out"
+        ]
+    ]
+)
     
 if __name__ == "__main__":
     main()

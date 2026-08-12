@@ -57,7 +57,7 @@ from utils.validation_utils import(
 )
 
 from utils.dcf_utils import(
-    forecast_free_cash_flows,
+    forecast_cashflows,
     discount_cash_flows,
     calculate_terminal_value,
     discount_terminal_value,
@@ -102,9 +102,12 @@ def main():
 
     for _, row in assumptions.iterrows():
 
-        cashflows = forecast_free_cash_flows(
+        # initial_growth = min(row["historical_growth_rate"],0.20)
+
+        cashflows = forecast_cashflows(
             row["starting_fcf"],
             row["historical_growth_rate"],
+            row["terminal_growth"],
             int(row["projection_years"])
         )
 
