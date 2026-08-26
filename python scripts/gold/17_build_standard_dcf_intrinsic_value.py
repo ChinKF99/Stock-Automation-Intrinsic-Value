@@ -1,8 +1,8 @@
 """
 ============================================================
-17_build_intrinsic_value.pu
+17_build_standard_dcf_intrinsic_value.py
 
-Build gold table Intrinsic Value using data from
+Build gold table Standard DCF Intrinsic Value using data from
 from gold table.
 
 Source
@@ -10,7 +10,7 @@ Source
 16_build_dcf_assumptions.py
 
 Target:
-    gold.build_intrinsic_value.py
+    gold.build_standard_dcf_intrinsic_value
 ============================================================
 """
 
@@ -41,7 +41,7 @@ from utils.sql_utils import (
     GOLD_16_SCHEMA_TABLE,
     GOLD_17_TABLE,
     GOLD_17_SCHEMA_TABLE,
-    INTRINSIC_VALUE_COLUMNS,
+    STANDARD_DCF_INTRINSIC_VALUE_COLUMNS,
     print_connection_info,
     ensure_schema,
     get_row_count,
@@ -102,8 +102,6 @@ def main():
 
     for _, row in assumptions.iterrows():
 
-        # initial_growth = min(row["historical_growth_rate"],0.20)
-
         cashflows = forecast_cashflows(
             row["starting_fcf"],
             row["historical_growth_rate"],
@@ -160,7 +158,7 @@ def main():
 
     intrinsic_df = pd.DataFrame(results).round(4)
 
-    validate_columns(intrinsic_df, INTRINSIC_VALUE_COLUMNS)
+    validate_columns(intrinsic_df, STANDARD_DCF_INTRINSIC_VALUE_COLUMNS)
     validate_primary_key(intrinsic_df,["symbol"])
     validate_nulls(intrinsic_df,["symbol", "margin_of_safety"])
     validate_row_count(intrinsic_df)
