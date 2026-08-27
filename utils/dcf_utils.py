@@ -162,7 +162,7 @@ def calculate_discount_rate(
     return risk_free_rate + beta * market_premium
 
 # ==========================================================
-# Step 17 Function for DCF Intrinsic Value
+# Step 17 & 18 Function for DCF Intrinsic Value
 # ==========================================================
 
 def get_growth_rate(
@@ -189,7 +189,7 @@ def get_growth_rate(
 
     return max(growth, terminal_growth)
 
-def forecast_cashflows(
+def forecast_free_cash_flows(
     starting_fcf: float,
     initial_growth: float,
     terminal_growth: float,
@@ -297,3 +297,38 @@ def calculate_margin_of_safety(
         return None
     
     return (intrinsic_value-current_price) / current_price
+
+
+def solve_implied_growth(
+    target_enterprise_value,
+    enterprise_value,
+    tolerance=1e-4,
+    max_iterations=100
+):
+    """
+    Solve for the growth rate that makes the
+    DCF Enterprise Value equal today's market
+    Enterprise Value.
+    """
+
+    low = -0.30
+    high = 0.60
+
+    for _ in range(max_iterations):
+
+        growth = (low + high) / 2
+
+        difference = (
+            enterprise_value -
+            target_enterprise_value
+        )
+
+        if abs(difference) < tolerance:
+            return growth
+
+        if difference > 0:
+            high = growth
+        else:
+            low = growth
+
+    return growth

@@ -57,7 +57,7 @@ from utils.validation_utils import(
 )
 
 from utils.dcf_utils import(
-    forecast_cashflows,
+    forecast_free_cash_flows,
     discount_cash_flows,
     calculate_terminal_value,
     discount_terminal_value,
@@ -86,7 +86,7 @@ TARGET_SCHEMA_TABLE = GOLD_17_SCHEMA_TABLE
 def main():
 
     logger.info("=" * 60)
-    logger.info("Building Gold INTRINSIC VALUATON (DCF)")
+    logger.info("Building Gold INTRINSIC VALUATON (STANDARD DCF)")
     logger.info("=" * 60)
 
     engine = get_sqlalchemy_engine()
@@ -102,7 +102,23 @@ def main():
 
     for _, row in assumptions.iterrows():
 
-        cashflows = forecast_cashflows(
+        # if row["starting_fcf"] <= 0:
+
+        #     results.append({
+
+        #     "symbol": row["symbol"],
+        #     "calendar_year": row["calendar_year"],
+        #     "current_price": row["price"],
+        #     "market_enterprise_value": None,
+        #     "historical_growth_rate": row["historical_growth_rate"],
+        #     "implied_growth_rate": None,
+        #     "valuation_status": "Negative FCF"
+
+        # })
+
+        # continue
+
+        cashflows = forecast_free_cash_flows(
             row["starting_fcf"],
             row["historical_growth_rate"],
             row["terminal_growth"],
@@ -156,14 +172,14 @@ def main():
             "margin_of_safety": margin_of_safety
         })
 
-    intrinsic_df = pd.DataFrame(results).round(4)
+    standard_dcf_df = pd.DataFrame(results).round(4)
 
-    validate_columns(intrinsic_df, STANDARD_DCF_INTRINSIC_VALUE_COLUMNS)
-    validate_primary_key(intrinsic_df,["symbol"])
-    validate_nulls(intrinsic_df,["symbol", "margin_of_safety"])
-    validate_row_count(intrinsic_df)
+    validate_columns(standard_dcf_df, STANDARD_DCF_INTRINSIC_VALUE_COLUMNS)
+    validate_primary_key(standard_dcf_df,["symbol"])
+    validate_nulls(standard_dcf_df,["symbol", "margin_of_safety"])
+    validate_row_count(standard_dcf_df)
 
-    load_dataframe_to_sql(engine, intrinsic_df, TARGET_SCHEMA, TARGET_TABLE)
+    load_dataframe_to_sql(engine, standard_dcf_df, TARGET_SCHEMA, TARGET_TABLE)
     
     get_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)
     

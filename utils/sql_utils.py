@@ -494,6 +494,7 @@ DCF_ASSUMPTION_COLUMNS = [
     "terminal_growth",
     "net_debt",
     "projection_years",
+    "market_cap"
 ]
 
 STANDARD_DCF_INTRINSIC_VALUE_COLUMNS = [

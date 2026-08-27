@@ -147,6 +147,7 @@ def main():
             "terminal_growth",
             "net_debt",
             "projection_years",
+            "market_cap"
             ]
     ]
 
@@ -158,19 +159,6 @@ def main():
     load_dataframe_to_sql(engine, dcfa_df, TARGET_SCHEMA, TARGET_TABLE)
     
     get_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)
-
-    print(
-    df[
-        [
-            "symbol",
-            "starting_fcf",
-            "historical_growth_rate",
-            "discount_rate",
-            "terminal_growth",
-            "weighted_average_shs_out"
-        ]
-    ]
-)
     
 if __name__ == "__main__":
     main()
