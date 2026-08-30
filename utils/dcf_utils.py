@@ -311,8 +311,8 @@ def solve_implied_growth(
     Enterprise Value.
     """
 
-    low = -0.30
-    high = 0.60
+    low = -0.50
+    high = 1.00
 
     for _ in range(max_iterations):
 
