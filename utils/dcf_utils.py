@@ -11,7 +11,6 @@ import pandas as pd
 import numpy as np
 import math
 
-
 DCF_DEFAULTS = {
     "terminal_growth": 0.025,
     "projection_years": 10,
@@ -262,6 +261,84 @@ def calculate_enterprise_value(
         + discounted_terminal_value)
     return enterprise_value
 
+# Main Loop to carry out the above listed function
+def calculate_dcf_enterprise_value(
+    starting_fcf: float,
+    growth_rate: float,
+    discount_rate: float,
+    terminal_growth: float,
+    projection_years: int
+) -> dict:
+    """
+    Calculate a complete DCF valuation.
+
+    Returns every intermediate result so both
+    Step17 and Step18 can reuse it.
+    """
+
+    # -------------------------------------
+    # Forecast FCF
+    # -------------------------------------
+
+    forecast_cashflows = forecast_free_cash_flows(
+        starting_fcf=starting_fcf,
+        initial_growth=growth_rate,
+        terminal_growth=terminal_growth,
+        projection_years=projection_years
+    )
+
+    # -------------------------------------
+    # Discount FCF
+    # -------------------------------------
+
+    discounted_cashflows = discount_cash_flows(
+        forecast_cashflows,
+        discount_rate
+    )
+
+    # -------------------------------------
+    # Terminal Value
+    # -------------------------------------
+
+    terminal_value = calculate_terminal_value(
+        forecast_cashflows[-1],
+        terminal_growth,
+        discount_rate
+    )
+
+    # -------------------------------------
+    # Discount Terminal Value
+    # -------------------------------------
+
+    discounted_terminal_value = discount_terminal_value(
+        terminal_value,
+        discount_rate,
+        projection_years
+    )
+
+    # -------------------------------------
+    # Enterprise Value
+    # -------------------------------------
+
+    enterprise_value = calculate_enterprise_value(
+        discounted_cashflows,
+        discounted_terminal_value
+    )
+
+    return {
+
+        "forecast_cashflows": forecast_cashflows,
+
+        "discounted_cashflows": discounted_cashflows,
+
+        "terminal_value": terminal_value,
+
+        "discounted_terminal_value": discounted_terminal_value,
+
+        "enterprise_value": enterprise_value
+
+    }
+
 def calculate_equity_value(
     enterprise_value: float,
     net_debt: float
@@ -298,37 +375,63 @@ def calculate_margin_of_safety(
     
     return (intrinsic_value-current_price) / current_price
 
-
 def solve_implied_growth(
+    starting_fcf,
     target_enterprise_value,
-    enterprise_value,
-    tolerance=1e-4,
-    max_iterations=100
+    discount_rate,
+    terminal_growth,
+    projection_years,
+    max_iterations=60,
+    tolerance=0.001
 ):
     """
-    Solve for the growth rate that makes the
-    DCF Enterprise Value equal today's market
-    Enterprise Value.
+    Solve the implied growth rate using Binary Search.
     """
 
-    low = -0.50
-    high = 1.00
+    low = -0.20
+    high = 0.40
 
     for _ in range(max_iterations):
 
         growth = (low + high) / 2
 
-        difference = (
-            enterprise_value -
-            target_enterprise_value
+        cashflows = forecast_free_cash_flows(
+            starting_fcf,
+            growth,
+            terminal_growth,
+            projection_years
         )
 
-        if abs(difference) < tolerance:
+        pv = discount_cash_flows(
+            cashflows,
+            discount_rate
+        )
+
+        tv = calculate_terminal_value(
+            cashflows[-1],
+            terminal_growth,
+            discount_rate
+        )
+
+        pv_tv = discount_terminal_value(
+            tv,
+            discount_rate,
+            projection_years
+        )
+
+        ev = calculate_enterprise_value(
+            pv,
+            pv_tv
+        )
+
+        difference = target_enterprise_value - ev
+
+        if abs(difference) <= target_enterprise_value * tolerance:
             return growth
 
-        if difference > 0:
-            high = growth
-        else:
+        if ev < target_enterprise_value:
             low = growth
+        else:
+            high = growth
 
     return growth

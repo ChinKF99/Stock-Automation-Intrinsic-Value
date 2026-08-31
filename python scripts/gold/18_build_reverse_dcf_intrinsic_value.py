@@ -41,6 +41,7 @@ from utils.sql_utils import (
     GOLD_16_SCHEMA_TABLE,
     GOLD_18_TABLE,
     GOLD_18_SCHEMA_TABLE,
+    REVERSE_DCF_INTRINSIC_VALUE_COLUMNS,
     print_connection_info,
     ensure_schema,
     get_row_count,
@@ -56,11 +57,7 @@ from utils.validation_utils import(
 )
 
 from utils.dcf_utils import(
-    forecast_free_cash_flows,
-    discount_cash_flows,
-    calculate_terminal_value,
-    discount_terminal_value,
-    calculate_enterprise_value,
+    calculate_dcf_enterprise_value,
     solve_implied_growth
 )
 
@@ -83,7 +80,7 @@ TARGET_SCHEMA_TABLE = GOLD_18_SCHEMA_TABLE
 def main():
 
     logger.info("=" * 60)
-    logger.info("Building Gold INTRINSIC VALUATON (STANDARD DCF)")
+    logger.info("Building Gold INTRINSIC VALUATON (REVERSE DCF)")
     logger.info("=" * 60)
 
     engine = get_sqlalchemy_engine()
@@ -99,65 +96,56 @@ def main():
 
     for _, row in assumptions.iterrows():
 
-        cashflows = forecast_free_cash_flows(
-            row["starting_fcf"],
-            row["historical_growth_rate"],
-            row["terminal_growth"],
-            int(row["projection_years"])
-        )
-
-        discounted_cash_flow = discount_cash_flows(
-            cashflows,
-            row["discount_rate"]
-        )
-
-        terminal_value = calculate_terminal_value(
-            cashflows[-1],
-            row["terminal_growth"],
-            row["discount_rate"]
-        )
-
-        discounted_terminal = discount_terminal_value(
-            terminal_value,
-            row["discount_rate"],
-            int(row["projection_years"])
-        )
-
-        enterprise_value = calculate_enterprise_value(
-            discounted_cash_flow,
-            discounted_terminal
-        )
-
-        target_enterprise_value = (
-            row["market_cap"]
-            + row["net_debt"]
-        )
+        market_ev = row["market_cap"] + row["net_debt"]
 
         implied_growth = solve_implied_growth(
-            target_enterprise_value,
-            enterprise_value
+            starting_fcf=row["starting_fcf"],
+            target_enterprise_value=market_ev,
+            discount_rate=row["discount_rate"],
+            terminal_growth=row["terminal_growth"],
+            projection_years=int(row["projection_years"])
         )
+
+        dcf = calculate_dcf_enterprise_value(
+            starting_fcf=row["starting_fcf"],
+            growth_rate=implied_growth,
+            discount_rate=row["discount_rate"],
+            terminal_growth=row["terminal_growth"],
+            projection_years=int(row["projection_years"])
+        )
+
+        gap = implied_growth - row["historical_growth_rate"]
+
+        if gap > 0.05:
+            status = "High Expectations"
+
+        elif gap > 0.02:
+            status = "Fairly Valued"
+
+        else:
+            status = "Low Expectations"
 
         results.append({
             "symbol": row["symbol"],
             "calendar_year": row["calendar_year"],
             "current_price": row["price"],
-            "market_enterprise_value": target_enterprise_value,
+            "market_enterprise_value": market_ev,
+            "calculated_enterprise_value":dcf["enterprise_value"],
             "historical_growth_rate": row["historical_growth_rate"],
             "implied_growth_rate": implied_growth,
-            "expectation_gap": (
+            "growth_premium": (
                 implied_growth -
                 row["historical_growth_rate"]),
-            "valuation_status": "Completed"
+            "valuation_status": status
         })
 
-        reverse_dcf_df = pd.DataFrame(results).round(4)
+    reverse_dcf_df = pd.DataFrame(results).round(4)
         
-        # validate_columns(reverse_dcf_df, STANDARD_DCF_INTRINSIC_VALUE_COLUMNS)
-        # validate_primary_key(reverse_dcf_df,["symbol"])
-        # validate_nulls(reverse_dcf_df,["symbol", "margin_of_safety"])
-        # validate_row_count(reverse_dcf_df)
-    
+    validate_columns(reverse_dcf_df, REVERSE_DCF_INTRINSIC_VALUE_COLUMNS)
+    validate_primary_key(reverse_dcf_df,["symbol"])
+    validate_nulls(reverse_dcf_df,["symbol", "growth_premium"])
+    validate_row_count(reverse_dcf_df)
+
     load_dataframe_to_sql(engine, reverse_dcf_df, TARGET_SCHEMA, TARGET_TABLE)
     
     get_row_count(engine, TARGET_SCHEMA, TARGET_TABLE)

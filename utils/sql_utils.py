@@ -512,6 +512,9 @@ REVERSE_DCF_INTRINSIC_VALUE_COLUMNS = [
     "calendar_year",
     "current_price",
     "market_enterprise_value",
+    "calculated_enterprise_value",
+    "historical_growth_rate",
     "implied_growth_rate",
-    "historical_growth_rate"
+    "growth_premium",
+    "valuation_status"
 ]

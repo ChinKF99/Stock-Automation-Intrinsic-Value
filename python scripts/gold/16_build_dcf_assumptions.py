@@ -61,7 +61,7 @@ from utils.validation_utils import(
 
 from utils.dcf_utils import(
     DCF_DEFAULTS,
-    calculate_revenue_growth_metrics,
+    calculate_historical_growth,
     calculate_average_fcf,
     calculate_discount_rate
 )
@@ -102,7 +102,8 @@ def main():
     ratios = load_table(SILVER_15_SCHEMA_TABLE,engine)
 
     # Produce a fair growth rate using CAGR Formula
-    historical_growth = calculate_revenue_growth_metrics(financials).round(4)
+    historical_growth = calculate_historical_growth(financials).round(4)
+
     average_fcf = calculate_average_fcf(financials, years=3)
 
     financials = (financials.sort_values(["symbol", "calendar_year"])
