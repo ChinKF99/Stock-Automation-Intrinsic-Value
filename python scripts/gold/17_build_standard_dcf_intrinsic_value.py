@@ -98,16 +98,6 @@ def main():
 
     for _, row in assumptions.iterrows():
 
-
-        # ============================================================
-        # Sensitivity Analysis purposes
-
-        # row["discount_rate"] = (
-        #     0.08
-        #     if row["symbol"] == "AAPL"
-        #     else row["discount_rate"])
-        # ============================================================
-
         dcf = calculate_dcf_enterprise_value(
             starting_fcf=row["starting_fcf"],
             growth_rate=row["historical_growth_rate"],
@@ -116,10 +106,10 @@ def main():
             projection_years=int(row["projection_years"])
         )
 
-        enterprise_value = dcf["enterprise_value"]
+        calculated_enterprise_value = dcf["calculated_ev"]
 
         equity_value = calculate_equity_value(
-            enterprise_value,
+            calculated_enterprise_value,
             row["net_debt"]
         )
 
@@ -133,85 +123,30 @@ def main():
             row["price"]
         )
 
+        if row["starting_fcf"] <= 0:
+            results.append({
+                "symbol": row["symbol"],
+                "calendar_year": row["calendar_year"],
+                "calculated_ev": 0,
+                "equity_value": 0,
+                "intrinsic_value": 0,
+                "current_price": row["price"],
+                "margin_of_safety": 0,
+                "valuation_status": "Negative FCF"
+            })
+
+            continue
+
         results.append({
             "symbol": row["symbol"],
             "calendar_year": row["calendar_year"],
-            "enterprise_value": enterprise_value,
+            "calculated_ev": calculated_enterprise_value,
             "equity_value": equity_value,
             "intrinsic_value": intrinsic_value,
             "current_price": row["price"],
-            "margin_of_safety": margin_of_safety
+            "margin_of_safety": margin_of_safety,
+            "valuation_status": "Completed"
         })
-
-        # ============================================================
-        # Sensitivity Analysis purposes
-
-        # if row["symbol"] == "AAPL":
-
-        #     print("\n" + "=" * 80)
-        #     print("AAPL STANDARD DCF AUDIT")
-        #     print("=" * 80)
-
-        #     print(f"\nCurrent Price           : {row['price']:,.2f}")
-        #     print(f"Market Cap              : {row['market_cap']:,.0f}")
-        #     print(f"Net Debt                : {row['net_debt']:,.0f}")
-
-        #     market_ev = row["market_cap"] + row["net_debt"]
-
-        #     print(f"Market Enterprise Value : {market_ev:,.0f}")
-
-        #     print("\nAssumptions")
-        #     print("-" * 40)
-            
-        #     print(f"Starting FCF            : {row['starting_fcf']:,.0f}")
-        #     print(f"Historical Growth       : {row['historical_growth_rate']:.2%}")
-        #     print(f"Discount Rate           : {row['discount_rate']:.2%}")
-        #     print(f"Terminal Growth         : {row['terminal_growth']:.2%}")
-        #     print(f"Projection Years        : {int(row['projection_years'])}")
-
-        #     print("\nForecast Cash Flows")
-        #     print("-" * 40)
-
-        #     for i, fcf in enumerate(cashflows, start=1):
-        #         print(f"Year {i:2d}: {fcf:,.0f}")
-
-        #     print("\nDiscounted Cash Flows")
-        #     print("-" * 40)
-
-        #     for i, pv in enumerate(discounted_cash_flow, start=1):
-        #         print(f"Year {i:2d}: {pv:,.0f}")
-
-        #     forecast_total = sum(discounted_cash_flow)
-
-        #     print("\nSummary")
-        #     print("-" * 40)
-
-        #     print(f"PV Forecast Cash Flows  : {forecast_total:,.0f}")
-        #     print(f"Terminal Value          : {terminal_value:,.0f}")
-        #     print(f"Discounted Terminal     : {discounted_terminal:,.0f}")
-        #     print(f"Enterprise Value (DCF)  : {enterprise_value:,.0f}")
-        #     print(f"Equity Value            : {equity_value:,.0f}")
-        #     print(f"Intrinsic Value         : {intrinsic_value:,.2f}")
-        #     print(f"Margin of Safety        : {margin_of_safety:.2%}")
-
-        #     print("\nComparison")
-        #     print("-" * 40)
-
-        #     print(f"Market EV              : {market_ev:,.0f}")
-        #     print(f"DCF EV                 : {enterprise_value:,.0f}")
-        #     print(f"Difference             : {market_ev - enterprise_value:,.0f}")
-
-        #     forecast_weight = forecast_total / enterprise_value
-        #     terminal_weight = discounted_terminal / enterprise_value
-
-        #     print("\nContribution")
-        #     print("-" * 40)
-
-        #     print(f"Forecast Contribution  : {forecast_weight:.2%}")
-        #     print(f"Terminal Contribution  : {terminal_weight:.2%}")
-
-        #     print("=" * 80)
-        # ============================================================
 
     standard_dcf_df = pd.DataFrame(results).round(4)
 

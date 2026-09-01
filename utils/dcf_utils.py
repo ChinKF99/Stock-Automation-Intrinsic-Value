@@ -21,7 +21,7 @@ DCF_DEFAULTS = {
 # Step 16 Function for DCF Assumptions
 # ==========================================================
 
-def calculate_revenue_growth_metrics(
+def calculate_historical_growth(
     df: pd.DataFrame,
     revenue_column: str = "revenue",
     lookback_years: int = 5,
@@ -256,10 +256,10 @@ def calculate_enterprise_value(
     Sum of discounted projected cash flows +
     Discounted terminal value.
     """
-    enterprise_value = (
+    calculated_ev = (
         sum(discounted_cashflows)
         + discounted_terminal_value)
-    return enterprise_value
+    return calculated_ev
 
 # Main Loop to carry out the above listed function
 def calculate_dcf_enterprise_value(
@@ -320,23 +320,17 @@ def calculate_dcf_enterprise_value(
     # Enterprise Value
     # -------------------------------------
 
-    enterprise_value = calculate_enterprise_value(
+    calculated_ev = calculate_enterprise_value(
         discounted_cashflows,
         discounted_terminal_value
     )
 
     return {
-
         "forecast_cashflows": forecast_cashflows,
-
         "discounted_cashflows": discounted_cashflows,
-
         "terminal_value": terminal_value,
-
         "discounted_terminal_value": discounted_terminal_value,
-
-        "enterprise_value": enterprise_value
-
+        "calculated_ev": calculated_ev
     }
 
 def calculate_equity_value(
@@ -381,17 +375,14 @@ def solve_implied_growth(
     discount_rate,
     terminal_growth,
     projection_years,
-    max_iterations=60,
-    tolerance=0.001
+    max_iterations=100,
 ):
-    """
-    Solve the implied growth rate using Binary Search.
-    """
+    low = -0.50
+    high = 0.80
 
-    low = -0.20
-    high = 0.40
+    absolute_tolerance = target_enterprise_value * 0.001
 
-    for _ in range(max_iterations):
+    for i in range(max_iterations):
 
         growth = (low + high) / 2
 
@@ -426,12 +417,22 @@ def solve_implied_growth(
 
         difference = target_enterprise_value - ev
 
-        if abs(difference) <= target_enterprise_value * tolerance:
-            return growth
+        if abs(difference) <= absolute_tolerance:
+            return {
+                "growth": growth,
+                "iterations": i + 1,
+                "difference": abs(difference),
+                "converged": True
+            }
 
         if ev < target_enterprise_value:
             low = growth
         else:
             high = growth
 
-    return growth
+    return {
+        "growth": growth,
+        "iterations": max_iterations,
+        "difference": abs(difference),
+        "converged": False
+    }

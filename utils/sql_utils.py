@@ -59,9 +59,9 @@ SILVER_15_SCHEMA_TABLE = f"{SILVER_SCHEMA}.{SILVER_15_TABLE}"
 # Gold Tables
 GOLD_16_TABLE = 'build_dcf_assumptions'
 GOLD_16_SCHEMA_TABLE = f"{GOLD_SCHEMA}.{GOLD_16_TABLE}"
-GOLD_17_TABLE = 'build_standard_dcf_intrinsic_value'
+GOLD_17_TABLE = 'build_standard_dcf'
 GOLD_17_SCHEMA_TABLE = f"{GOLD_SCHEMA}.{GOLD_17_TABLE}"
-GOLD_18_TABLE = 'build_reverse_dcf_intrinsic_value'
+GOLD_18_TABLE = 'build_reverse_dcf'
 GOLD_18_SCHEMA_TABLE = f"{GOLD_SCHEMA}.{GOLD_17_TABLE}"
 
 # *****************************************************************************
@@ -500,21 +500,25 @@ DCF_ASSUMPTION_COLUMNS = [
 STANDARD_DCF_INTRINSIC_VALUE_COLUMNS = [
     "symbol",
     "calendar_year",
-    "enterprise_value",
+    "calculated_ev",
     "equity_value",
     "intrinsic_value",
     "current_price",
-    "margin_of_safety"
+    "margin_of_safety",
+    "valuation_status"
 ]
 
 REVERSE_DCF_INTRINSIC_VALUE_COLUMNS = [
     "symbol",
     "calendar_year",
     "current_price",
-    "market_enterprise_value",
-    "calculated_enterprise_value",
+    "market_ev",
+    "calculated_ev",
     "historical_growth_rate",
     "implied_growth_rate",
     "growth_premium",
+    "iterations",
+    "difference",
+    "converged",
     "valuation_status"
 ]

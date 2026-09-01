@@ -98,7 +98,7 @@ def main():
 
         market_ev = row["market_cap"] + row["net_debt"]
 
-        implied_growth = solve_implied_growth(
+        solution = solve_implied_growth(
             starting_fcf=row["starting_fcf"],
             target_enterprise_value=market_ev,
             discount_rate=row["discount_rate"],
@@ -106,6 +106,8 @@ def main():
             projection_years=int(row["projection_years"])
         )
 
+        implied_growth = solution["growth"]
+        
         dcf = calculate_dcf_enterprise_value(
             starting_fcf=row["starting_fcf"],
             growth_rate=implied_growth,
@@ -125,17 +127,37 @@ def main():
         else:
             status = "Low Expectations"
 
+        if row["starting_fcf"] <= 0:
+            results.append({
+                "symbol": row["symbol"],
+                "calendar_year": row["calendar_year"],
+                "current_price": row["price"],
+                "market_ev": market_ev,
+                "calculated_ev": 0,
+                "historical_growth_rate":
+                    row["historical_growth_rate"],
+                "implied_growth_rate": 0,
+                "growth_premium": 0,
+                "iterations": 0,
+                "difference": 0,
+                "converged": False,
+                "valuation_status": "Negative FCF"
+            })
+
+            continue
+        
         results.append({
             "symbol": row["symbol"],
             "calendar_year": row["calendar_year"],
             "current_price": row["price"],
-            "market_enterprise_value": market_ev,
-            "calculated_enterprise_value":dcf["enterprise_value"],
+            "market_ev": market_ev,
+            "calculated_ev":dcf["calculated_ev"],
             "historical_growth_rate": row["historical_growth_rate"],
             "implied_growth_rate": implied_growth,
-            "growth_premium": (
-                implied_growth -
-                row["historical_growth_rate"]),
+            "growth_premium": (implied_growth -row["historical_growth_rate"]),
+            "iterations": solution["iterations"],
+            "difference": solution["difference"],
+            "converged": solution["converged"],
             "valuation_status": status
         })
 
