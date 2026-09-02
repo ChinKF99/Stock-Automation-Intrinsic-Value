@@ -125,7 +125,7 @@ SP500_WIKIPEDIA_URL = (
 # API Batch Settings
 # ==========================================================
 
-FMP_BATCH_SIZE = 5
+FMP_BATCH_SIZE = 11
 REQUEST_SLEEP_SECONDS = 0.25
 HTTP_TIMEOUT = 30
 

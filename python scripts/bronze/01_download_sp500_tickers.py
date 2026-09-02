@@ -22,7 +22,7 @@ from config.config import (
     SP500_WIKIPEDIA_URL,
     SP500_TICKERS_CSV_FILE_PATH,
     HEADERS,
-    HTTP_TIMEOUT,
+    HTTP_TIMEOUT
 )
 
 from utils.csv_json_utils import(

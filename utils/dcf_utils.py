@@ -436,3 +436,54 @@ def solve_implied_growth(
         "difference": abs(difference),
         "converged": False
     }
+
+def run_dcf_scenario(
+    row,
+    growth_adjustment=0,
+    discount_adjustment=0,
+):
+    """
+    Execute one DCF scenario.
+    """
+
+    growth = (
+        row["historical_growth_rate"]
+        + growth_adjustment
+    )
+
+    discount = (
+        row["discount_rate"]
+        + discount_adjustment
+    )
+
+    dcf_result = calculate_dcf_enterprise_value(
+        starting_fcf=row["starting_fcf"],
+        growth_rate=growth,
+        discount_rate=discount,
+        terminal_growth=row["terminal_growth"],
+        projection_years=int(row["projection_years"]),
+    )
+
+    calculated_ev = dcf_result["calculated_ev"]
+
+    equity_value = calculate_equity_value(
+        calculated_ev,
+        row["net_debt"],
+    )
+
+    intrinsic = calculate_intrinsic_value(
+        equity_value,
+        row["weighted_average_shs_out"],
+    )
+
+    mos = calculate_margin_of_safety(
+        intrinsic,
+        row["price"],
+    )
+
+    return {
+        "calculated_ev": calculated_ev,
+        "equity_value": equity_value,
+        "intrinsic_value": intrinsic,
+        "margin_of_safety": mos,
+    }

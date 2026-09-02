@@ -62,7 +62,9 @@ GOLD_16_SCHEMA_TABLE = f"{GOLD_SCHEMA}.{GOLD_16_TABLE}"
 GOLD_17_TABLE = 'build_standard_dcf'
 GOLD_17_SCHEMA_TABLE = f"{GOLD_SCHEMA}.{GOLD_17_TABLE}"
 GOLD_18_TABLE = 'build_reverse_dcf'
-GOLD_18_SCHEMA_TABLE = f"{GOLD_SCHEMA}.{GOLD_17_TABLE}"
+GOLD_18_SCHEMA_TABLE = f"{GOLD_SCHEMA}.{GOLD_18_TABLE}"
+GOLD_19_TABLE = 'scenario_analysis'
+GOLD_19_SCHEMA_TABLE = f"{GOLD_SCHEMA}.{GOLD_19_TABLE}"
 
 # *****************************************************************************
 # UNIVERSAL SQL SCRIPTS
@@ -520,5 +522,18 @@ REVERSE_DCF_INTRINSIC_VALUE_COLUMNS = [
     "iterations",
     "difference",
     "converged",
+    "valuation_status"
+]
+
+SCENARIO_ANALYSIS_COLUMNS = [
+    "symbol",
+    "calendar_year",
+    "current_price",
+    "bear_intrinsic_value",
+    "base_intrinsic_value",
+    "bull_intrinsic_value",
+    "bear_margin_of_safety",
+    "base_margin_of_safety",
+    "bull_margin_of_safety",
     "valuation_status"
 ]

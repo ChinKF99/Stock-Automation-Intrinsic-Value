@@ -49,7 +49,7 @@ from utils.sql_utils import (
     ensure_schema,
     get_row_count,
     load_dataframe_to_sql,
-    load_table,
+    load_table
 )
 
 from utils.validation_utils import(

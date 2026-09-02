@@ -24,16 +24,9 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from config.config import (
-    get_sqlalchemy_engine,
     FMP_PROFILE_URL,
     COMPANY_PROFILE_FOLDER,
-    FMP_BATCH_SIZE,
-)
-
-from utils.sql_utils import (
-    print_connection_info,
-    get_sp500_tickers,
-    BRONZE_02_SCHEMA_TABLE
+    FMP_BATCH_SIZE
 )
 
 from utils.download_utils import download_endpoint

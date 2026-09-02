@@ -31,9 +31,7 @@ from config.config import (
 )
 
 from utils.sql_utils import (
-    print_connection_info,
-    get_sp500_tickers,
-    BRONZE_02_SCHEMA_TABLE
+    print_connection_info
 )
 
 from utils.download_utils import download_endpoint
