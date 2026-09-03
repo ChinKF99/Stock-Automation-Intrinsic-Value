@@ -104,17 +104,17 @@ for name, script in PIPELINE:
 pipeline_time = time.perf_counter() - pipeline_start
 
 print()
-print("=" * 60)
-print("PIPELINE SUMMARY")
-print("=" * 60)
+logger.info("=" * 60)
+logger.info("PIPELINE SUMMARY")
+logger.info("=" * 60)
 
 for name, elapsed, success in results:
 
     status = "✔" if success else "✘"
 
-    print(f"{name:<28} {status} {elapsed:>6.1f} sec")
+    logger.info(f"{name:<28} {status} {elapsed:>6.1f} sec")
 
 print()
-print(f"Pipeline Completed")
-print(f"Total Runtime : {pipeline_time:.1f} sec")
-print("=" * 60)
+logger.info(f"Pipeline Completed")
+logger.info(f"Total Runtime : {pipeline_time:.1f} sec")
+logger.info("=" * 60)
