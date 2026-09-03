@@ -65,6 +65,8 @@ GOLD_18_TABLE = 'build_reverse_dcf'
 GOLD_18_SCHEMA_TABLE = f"{GOLD_SCHEMA}.{GOLD_18_TABLE}"
 GOLD_19_TABLE = 'scenario_analysis'
 GOLD_19_SCHEMA_TABLE = f"{GOLD_SCHEMA}.{GOLD_19_TABLE}"
+GOLD_20_TABLE = 'investment_dashboard'
+GOLD_20_SCHEMA_TABLE = f"{GOLD_SCHEMA}.{GOLD_20_TABLE}"
 
 # *****************************************************************************
 # UNIVERSAL SQL SCRIPTS

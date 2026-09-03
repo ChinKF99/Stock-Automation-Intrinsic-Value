@@ -101,7 +101,6 @@ def main():
 
     ratios = load_table(SILVER_15_SCHEMA_TABLE,engine)
 
-    # Produce a fair growth rate using CAGR Formula
     historical_growth = calculate_historical_growth(financials).round(4)
 
     average_fcf = calculate_average_fcf(financials, years=3)
