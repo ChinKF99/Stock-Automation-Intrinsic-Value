@@ -113,7 +113,6 @@ def main():
     standard = standard[
     [
         "symbol",
-        "intrinsic_value",
         "margin_of_safety"
     ]]
 
@@ -159,13 +158,12 @@ def main():
     )
 
     dashboard.rename(columns={
-    "price":"current_price",
-    "intrinsic_value":"base_intrinsic_value_standard"}, inplace=True)
+    "price":"current_price"}, inplace=True)
 
    # Add derived columns that is useful 
 
     dashboard["valuation_difference"] = (
-    dashboard["base_intrinsic_value_standard"]
+    dashboard["base_intrinsic_value"]
     - dashboard["current_price"]
     )
 
@@ -180,7 +178,7 @@ def main():
     )
 
     dashboard["is_undervalued"] = (
-        dashboard["base_intrinsic_value_standard"]
+        dashboard["base_intrinsic_value"]
         > dashboard["current_price"]
     )
 
